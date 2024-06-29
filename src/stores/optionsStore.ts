@@ -36,6 +36,7 @@ export const useOptionsStore = defineStore('options', () => {
             mazeWidth.value = newValue;
         }
         if (newValue !== oldValue) {
+            updateCellAndImageSize(cellSize.value, cellSize.value * newValue, cellSize.value * mazeHeight.value);
             //onMazeWidth(newValue);
         }
     });
@@ -47,6 +48,7 @@ export const useOptionsStore = defineStore('options', () => {
             mazeHeight.value = newValue;
         }
         if (newValue !== oldValue) {
+            updateCellAndImageSize(cellSize.value, cellSize.value * mazeWidth.value, cellSize.value * newValue);
             //onMazeHeight(newValue);
         }
     });
@@ -78,45 +80,75 @@ export const useOptionsStore = defineStore('options', () => {
         // onLongPassages(longPassages.value);
     });
 
-    const cellSize = ref(DEFAULT_CELL_SIZE);
-    watch(crossPct, (value, oldValue) => {
-        let newValue = value;
-        if (newValue < MIN_CELL_SIZE) {
-            newValue = MIN_CELL_SIZE;
-        }
-        if (newValue !== value) {
-            cellSize.value = newValue;
-        }
-        if (newValue !== oldValue) {
+    function updateCellAndImageSize(cSize: number, imgWidth: number, imgHeight: number) {
+        let changes: boolean
+        do {
+            changes = false;
+            if (cSize < MIN_CELL_SIZE) {
 
-            // onCellSize(newValue);
+                cSize = MIN_CELL_SIZE;
+                imgWidth = cSize * mazeWidth.value;
+                imgHeight = cSize * mazeHeight.value;
+                changes = true;
+            } else if (imgWidth < MIN_IMAGE_SIZE) {
+                imgWidth = MIN_IMAGE_SIZE;
+                cSize = imgWidth / mazeWidth.value;
+                imgHeight = imgWidth * mazeHeight.value / mazeWidth.value;
+                changes = true;
+            } else if (imgWidth > MAX_IMAGE_SIZE) {
+                imgWidth = MAX_IMAGE_SIZE;
+                cSize = imgWidth / mazeWidth.value;
+                imgHeight = imgWidth * mazeHeight.value / mazeWidth.value;
+                changes = true;
+            } else if (imgHeight < MIN_IMAGE_SIZE) {
+                imgHeight = MIN_IMAGE_SIZE;
+                cSize = imgHeight / mazeHeight.value;
+                imgWidth = imgHeight * mazeWidth.value / mazeHeight.value;
+                changes = true;
+            } else if (imgHeight > MAX_IMAGE_SIZE) {
+                imgHeight = MAX_IMAGE_SIZE;
+                cSize = imgHeight / mazeHeight.value;
+                imgWidth = imgHeight * mazeWidth.value / mazeHeight.value;
+                changes = true;
+            }
+        } while (changes);
+
+        if (cSize !== cellSize.value) {
+            cellSize.value = cSize;
+            // onCellSize(cellSize.value);
         }
+        if (imgWidth !== imageWidth.value) {
+            imageWidth.value = imgWidth;
+            // onImageWidth(imageWidth.value);
+        }
+        if (imgHeight !== imageHeight.value) {
+            imageHeight.value = imgHeight;
+            // onImageHeight(imageHeight.value);
+        }
+    }
+
+    const cellSize = ref(DEFAULT_CELL_SIZE);
+    watch(cellSize, value => {
+        const cSize = Math.max(MIN_CELL_SIZE, value);
+        const imgWidth = cSize * mazeWidth.value;
+        const imgHeight = cSize * mazeHeight.value;
+        updateCellAndImageSize(cSize, imgWidth, imgHeight);
     });
 
     const imageWidth = ref(DEFAULT_IMAGE_SIZE);
-    watch(imageWidth, (value, oldValue) => {
-        let newValue = clamp(value, MIN_IMAGE_SIZE, MAX_IMAGE_SIZE, DEFAULT_IMAGE_SIZE);
-        if (newValue !== value) {
-            imageWidth.value = newValue;
-        }
-        if (newValue !== oldValue) {
-            cellSize.value = imageWidth.value / mazeWidth.value;
-            imageHeight.value = imageWidth.value * mazeHeight.value / mazeWidth.value;
-            // onImageWidth(newValue);
-        }
+    watch(imageWidth, value => {
+        const imgWidth = clamp(value, MIN_IMAGE_SIZE, MAX_IMAGE_SIZE, DEFAULT_IMAGE_SIZE);
+        const imgHeight = imgWidth * mazeHeight.value / mazeWidth.value;
+        const cSize = imgWidth / mazeWidth.value;
+        updateCellAndImageSize(cSize, imgWidth, imgHeight);
     });
 
     const imageHeight = ref(DEFAULT_IMAGE_SIZE);
-    watch(imageHeight, (value, oldValue) => {
-        let newValue = clamp(value, MIN_IMAGE_SIZE, MAX_IMAGE_SIZE, DEFAULT_IMAGE_SIZE);
-        if (newValue !== value) {
-            imageHeight.value = newValue;
-        }
-        if (newValue !== oldValue) {
-            cellSize.value = imageHeight.value / mazeHeight.value;
-            imageWidth.value = imageHeight.value * mazeWidth.value / mazeHeight.value;
-            // onImageHeight(newValue);
-        }
+    watch(imageHeight, value => {
+        const imgHeight = clamp(value, MIN_IMAGE_SIZE, MAX_IMAGE_SIZE, DEFAULT_IMAGE_SIZE);
+        const imgWidth = imgHeight * mazeWidth.value / mazeHeight.value;
+        const cSize = imgHeight / mazeHeight.value;
+        updateCellAndImageSize(cSize, imgWidth, imgHeight);
     });
 
     function reset() {
@@ -127,5 +159,5 @@ export const useOptionsStore = defineStore('options', () => {
         longPassages.value = DEFAULT_LONG_PASSAGES;
     }
 
-    return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, reset };
+    return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, reset };
 });

@@ -1,26 +1,57 @@
 <script setup lang="ts">
 import {
-  CROSS_PCT_STEP,
-  LOOP_PCT_STEP, MAX_CROSS_PCT,
+  CELL_SIZE_STEP,
+  CROSS_PCT_STEP, IMAGE_SIZE_STEP,
+  LOOP_PCT_STEP, MAX_CROSS_PCT, MAX_IMAGE_SIZE,
   MAX_LOOP_PCT,
   MAX_MAZE_SIZE,
-  MAZE_SIZE_STEP, MIN_CROSS_PCT,
+  MAZE_SIZE_STEP, MIN_CELL_SIZE, MIN_CROSS_PCT, MIN_IMAGE_SIZE,
   MIN_LOOP_PCT,
   MIN_MAZE_SIZE,
   useOptionsStore
 } from 'stores/optionsStore';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 
 const optionsStore = useOptionsStore();
-const { mazeWidth, mazeHeight, loopPct, crossPct, longPassages } = storeToRefs(optionsStore);
+const { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight }
+    = storeToRefs(optionsStore);
+
+const formattedCellSize = computed({
+  get() {
+    return Math.round(1000 * cellSize.value) / 1000;
+  },
+  set(value: number) {
+    cellSize.value = value;
+  }
+});
+
+const formattedImageWidth = computed({
+  get() {
+    return Math.round(1000 * imageWidth.value) / 1000;
+  },
+  set(value: number) {
+    imageWidth.value = value;
+  }
+});
+
+const formattedImageHeight = computed({
+  get() {
+    return Math.round(1000 * imageHeight.value) / 1000;
+  },
+  set(value: number) {
+    imageHeight.value = value;
+  }
+});
+
 </script>
 
 <template>
   <q-scroll-area class="full-height-scroll-area">
-    <q-input label="Maze Width" v-model.number="mazeWidth" type="number" filled :min="MIN_MAZE_SIZE" :max="MAX_MAZE_SIZE"
-             :step="MAZE_SIZE_STEP"/>
-    <q-input label="Maze Height" v-model.number="mazeHeight" type="number" filled :min="MIN_MAZE_SIZE" :max="MAX_MAZE_SIZE"
-             :step="MAZE_SIZE_STEP"/>
+    <q-input label="Maze Width" v-model.number="mazeWidth" type="number" filled :min="MIN_MAZE_SIZE"
+             :max="MAX_MAZE_SIZE" :step="MAZE_SIZE_STEP"/>
+    <q-input label="Maze Height" v-model.number="mazeHeight" type="number" filled :min="MIN_MAZE_SIZE"
+             :max="MAX_MAZE_SIZE" :step="MAZE_SIZE_STEP"/>
     <q-input label="Loops" v-model.number="loopPct" type="number" filled :min="MIN_LOOP_PCT" :max="MAX_LOOP_PCT"
              :step="LOOP_PCT_STEP"/>
     <q-input label="Crosses" v-model.number="crossPct" type="number" filled :min="MIN_CROSS_PCT" :max="MAX_CROSS_PCT"
@@ -30,6 +61,12 @@ const { mazeWidth, mazeHeight, loopPct, crossPct, longPassages } = storeToRefs(o
         <q-toggle v-model="longPassages"></q-toggle>
       </template>
     </q-field>
+    <q-input label="Cell Size" v-model.number="formattedCellSize" type="number" filled :min="MIN_CELL_SIZE"
+             :step="CELL_SIZE_STEP"/>
+    <q-input label="Image Width" v-model.number="formattedImageWidth" type="number" filled :min="MIN_IMAGE_SIZE"
+             :max="MAX_IMAGE_SIZE" :step="IMAGE_SIZE_STEP"/>
+    <q-input label="Image Height" v-model.number="formattedImageHeight" type="number" filled :min="MIN_IMAGE_SIZE"
+             :max="MAX_IMAGE_SIZE" :step="IMAGE_SIZE_STEP"/>
   </q-scroll-area>
 </template>
 
