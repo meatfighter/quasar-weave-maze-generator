@@ -28,6 +28,18 @@ export const MIN_IMAGE_SIZE = 1;
 export const MAX_IMAGE_SIZE = 10_000;
 export const IMAGE_SIZE_STEP = 1;
 
+export const DEFAULT_SQUARE_CORNERS = false;
+
+export const DEFAULT_LINE_WIDTH_PCT = 15;
+export const MIN_LINE_WIDTH_PCT = 0;
+export const MAX_LINE_WIDTH_PCT = 100;
+export const LINE_WIDTH_PCT_STEP = 1;
+
+export const DEFAULT_PASSAGE_WIDTH_PCT = 70;
+export const MIN_PASSAGE_WIDTH_PCT = 0;
+export const MAX_PASSAGE_WIDTH_PCT = 100;
+export const PASSAGE_WIDTH_PCT_STEP = 1;
+
 export const useOptionsStore = defineStore('options', () => {
     const mazeWidth = ref(DEFAULT_MAZE_SIZE);
     watch(mazeWidth, (value, oldValue) => {
@@ -53,14 +65,14 @@ export const useOptionsStore = defineStore('options', () => {
         }
     });
 
-    const loopPct = ref(DEFAULT_CROSS_PCT);
+    const loopPct = ref(DEFAULT_LOOP_PCT);
     watch(loopPct, (value, oldValue) => {
         const newValue = clamp(value, MIN_LOOP_PCT, MAX_LOOP_PCT, DEFAULT_LOOP_PCT);
         if (newValue !== value) {
             loopPct.value = newValue;
         }
         if (newValue !== oldValue) {
-            //onCrossPct(newValue);
+            //onLoopPct(newValue);
         }
     });
 
@@ -151,13 +163,47 @@ export const useOptionsStore = defineStore('options', () => {
         updateCellAndImageSize(cSize, imgWidth, imgHeight);
     });
 
+    const squareCorners = ref(DEFAULT_LONG_PASSAGES);
+    watch(squareCorners, () => {
+        // onSquareCorners(squareCorners.value);
+    });
+
+    const lineWidthPct = ref(DEFAULT_LINE_WIDTH_PCT);
+    watch(lineWidthPct, (value, oldValue) => {
+        const newValue = clamp(value, MIN_LINE_WIDTH_PCT, MAX_LINE_WIDTH_PCT, DEFAULT_LINE_WIDTH_PCT);
+        if (newValue !== value) {
+            lineWidthPct.value = newValue;
+        }
+        if (newValue !== oldValue) {
+            //onLineWidthPct(newValue);
+        }
+    });
+
+    const passageWidthPct = ref(DEFAULT_PASSAGE_WIDTH_PCT);
+    watch(passageWidthPct, (value, oldValue) => {
+        const newValue = clamp(value, MIN_PASSAGE_WIDTH_PCT, MAX_PASSAGE_WIDTH_PCT, DEFAULT_PASSAGE_WIDTH_PCT);
+        if (newValue !== value) {
+            passageWidthPct.value = newValue;
+        }
+        if (newValue !== oldValue) {
+            //onPassageWidthPct(newValue);
+        }
+    });    
+
     function reset() {
         mazeWidth.value = DEFAULT_MAZE_SIZE;
         mazeHeight.value = DEFAULT_MAZE_SIZE;
         loopPct.value = DEFAULT_LOOP_PCT;
         crossPct.value = DEFAULT_CROSS_PCT;
         longPassages.value = DEFAULT_LONG_PASSAGES;
+        cellSize.value = DEFAULT_CELL_SIZE;
+        imageWidth.value = DEFAULT_IMAGE_SIZE;
+        imageHeight.value = DEFAULT_IMAGE_SIZE;
+        squareCorners.value = DEFAULT_SQUARE_CORNERS;
+        lineWidthPct.value = DEFAULT_LINE_WIDTH_PCT;
+        passageWidthPct.value = DEFAULT_PASSAGE_WIDTH_PCT;
     }
 
-    return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, reset };
+    return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,
+            lineWidthPct, passageWidthPct, reset };
 });
