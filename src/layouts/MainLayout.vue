@@ -1,41 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 
-const leftDrawerOpen = ref(false);
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+import MainHeader from 'components/MainHeader.vue';
+import MainPage from 'components/MainPage.vue';
+import MainFooter from 'components/MainFooter.vue';
 </script>
 
 <template>
-  <q-layout view="hHh LpR fFf">
+  <q-layout view="hHh lpr fFf">
 
-    <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title>
-          Title
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" elevated :width="500">
-      <p>Hello, World! Hello, World! Hello, World! Hello, World! Hello, World!</p>
-    </q-drawer>
+    <MainHeader/>
 
     <q-page-container>
-      <router-view />
+      <MainPage/>
     </q-page-container>
 
-    <q-footer elevated class="bg-grey-8 text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          <div>Title</div>
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer>
-
+    <MainFooter/>
   </q-layout>
 </template>
