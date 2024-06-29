@@ -40,6 +40,10 @@ export const MIN_PASSAGE_WIDTH_PCT = 0;
 export const MAX_PASSAGE_WIDTH_PCT = 100;
 export const PASSAGE_WIDTH_PCT_STEP = 1;
 
+export const DEFAULT_WALL_COLOR = '#000000FF';
+export const DEFAULT_BACKGROUND_COLOR = '#FFFFFFFF';
+export const DEFAULT_SOLUTION_COLOR = '#FF0000FF';
+
 export const useOptionsStore = defineStore('options', () => {
     const mazeWidth = ref(DEFAULT_MAZE_SIZE);
     watch(mazeWidth, (value, oldValue) => {
@@ -88,8 +92,10 @@ export const useOptionsStore = defineStore('options', () => {
     });
 
     const longPassages = ref(DEFAULT_LONG_PASSAGES);
-    watch(longPassages, () => {
-        // onLongPassages(longPassages.value);
+    watch(longPassages, (value, oldValue) => {
+        if (value !== oldValue) {
+            // onLongPassages(longPassages.value);
+        }
     });
 
     function updateCellAndImageSize(cSize: number, imgWidth: number, imgHeight: number) {
@@ -164,8 +170,10 @@ export const useOptionsStore = defineStore('options', () => {
     });
 
     const squareCorners = ref(DEFAULT_LONG_PASSAGES);
-    watch(squareCorners, () => {
-        // onSquareCorners(squareCorners.value);
+    watch(squareCorners, (value, oldValue) => {
+        if (value !== oldValue) {
+            // onSquareCorners(value);
+        }
     });
 
     const lineWidthPct = ref(DEFAULT_LINE_WIDTH_PCT);
@@ -188,7 +196,28 @@ export const useOptionsStore = defineStore('options', () => {
         if (newValue !== oldValue) {
             //onPassageWidthPct(newValue);
         }
-    });    
+    });
+
+    const wallColor = ref(DEFAULT_WALL_COLOR);
+    watch(wallColor, (value, oldValue) => {
+        if (value !== oldValue) {
+            // onWallColor(value);
+        }
+    });
+
+    const backgroundColor = ref(DEFAULT_BACKGROUND_COLOR);
+    watch(backgroundColor, (value, oldValue) => {
+        if (value !== oldValue) {
+            // onWallColor(value);
+        }
+    });
+
+    const solutionColor = ref(DEFAULT_SOLUTION_COLOR);
+    watch(solutionColor, (value, oldValue) => {
+        if (value !== oldValue) {
+            // onSolutionColor(value);
+        }
+    });
 
     function reset() {
         mazeWidth.value = DEFAULT_MAZE_SIZE;
@@ -202,8 +231,11 @@ export const useOptionsStore = defineStore('options', () => {
         squareCorners.value = DEFAULT_SQUARE_CORNERS;
         lineWidthPct.value = DEFAULT_LINE_WIDTH_PCT;
         passageWidthPct.value = DEFAULT_PASSAGE_WIDTH_PCT;
+        wallColor.value = DEFAULT_WALL_COLOR;
+        backgroundColor.value = DEFAULT_BACKGROUND_COLOR;
+        solutionColor.value = DEFAULT_SOLUTION_COLOR;
     }
 
     return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,
-            lineWidthPct, passageWidthPct, reset };
+            lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, reset };
 });

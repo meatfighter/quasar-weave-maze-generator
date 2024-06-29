@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import OptionsArea from 'components/OptionsArea.vue';
 import OutputArea from 'components/OutputArea.vue';
 
-const splitterModel = ref(150);
+const splitterModel = ref(170);
 </script>
 
 <template>

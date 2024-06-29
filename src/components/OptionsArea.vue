@@ -15,7 +15,7 @@ import { computed } from 'vue';
 
 const optionsStore = useOptionsStore();
 const { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,
-    lineWidthPct, passageWidthPct } = storeToRefs(optionsStore);
+    lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor } = storeToRefs(optionsStore);
 
 const formattedCellSize = computed({
   get() {
@@ -76,6 +76,33 @@ const formattedImageHeight = computed({
              :max="MAX_LINE_WIDTH_PCT" :step="LINE_WIDTH_PCT_STEP"/>
     <q-input label="Passage Width (%)" v-model.number="passageWidthPct" type="number" filled :min="MIN_PASSAGE_WIDTH_PCT"
              :max="MAX_PASSAGE_WIDTH_PCT" :step="PASSAGE_WIDTH_PCT_STEP"/>
+    <q-input label="Background Color" filled v-model="backgroundColor">
+      <template v-slot:append>
+        <q-icon name="colorize" class="cursor-pointer">
+          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+            <q-color v-model="backgroundColor"></q-color>
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+    </q-input>
+    <q-input label="Wall Color" filled v-model="wallColor">
+      <template v-slot:append>
+        <q-icon name="colorize" class="cursor-pointer">
+          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+            <q-color v-model="wallColor"></q-color>
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+    </q-input>
+    <q-input label="Solution Color" filled v-model="solutionColor">
+      <template v-slot:append>
+        <q-icon name="colorize" class="cursor-pointer">
+          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+            <q-color v-model="solutionColor"></q-color>
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+    </q-input>
   </q-scroll-area>
 </template>
 
