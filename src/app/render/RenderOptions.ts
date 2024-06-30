@@ -44,7 +44,7 @@ export class RenderOptions {
                 public readonly wallColor = DEFAULT_WALL_COLOR,
                 public readonly solutionColor = DEFAULT_SOLUTION_COLOR,
 
-                public readonly backgroundColor?: Color,
+                public backgroundColor?: Color,
                 ) {
     }
 }

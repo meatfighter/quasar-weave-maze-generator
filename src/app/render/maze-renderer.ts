@@ -364,7 +364,7 @@ export function renderMaze(maze: Maze, renderOptions: RenderOptions): Blob {
     const wallPaths = generateWallPaths(maze, renderOptions.cellSize, cellMarginFrac);
 
     const renderer = new SvgRenderer();
-    renderer.setSize(renderOptions.imageWidth, renderOptions.imageHeight);
+    renderer.setSize(renderOptions.cellSize * maze.width, renderOptions.cellSize * maze.height);
 
     const linecap = renderOptions.roundedCorners ? 'round' : 'square';
     const lineWidth = renderOptions.lineWidthFrac * renderOptions.cellSize;
@@ -374,7 +374,7 @@ export function renderMaze(maze: Maze, renderOptions: RenderOptions): Blob {
         backgroundColor = DEFAULT_SVG_AND_PDF_BACKGROUND_COLOR;
     }
     if (backgroundColor.alpha > 0) {
-        renderer.setFill(backgroundColor).fillRect(0, 0, renderOptions.imageWidth, renderOptions.imageHeight);
+        renderer.setFill(backgroundColor).fillRect(0, 0, renderOptions.cellSize * maze.width, renderOptions.cellSize * maze.height);
     }
 
     if (solutionPaths && renderOptions.solutionColor.alpha > 0) {

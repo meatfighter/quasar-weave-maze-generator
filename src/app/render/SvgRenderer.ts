@@ -7,7 +7,7 @@ export class SvgRenderer implements Renderer {
 
     private readonly K = 4 * (Math.sqrt(2) - 1) / 3;
 
-    private svg = SVG().addTo('body');
+    private svg = SVG();
 
     private x0 = 0;
     private y0 = 0;
