@@ -1,4 +1,4 @@
-import { Color } from './Color';
+import { Color } from 'src/types/Color';
 import { DEFAULT_PAPER_SIZE } from './PaperSize';
 import { DEFAULT_FILE_FORMAT } from './FileFormat';
 
@@ -38,7 +38,7 @@ export class RenderOptions {
                 public readonly cellSize = DEFAULT_CELL_SIZE,
                 public readonly imageWidth = MIN_IMAGE_SIZE,
                 public readonly imageHeight = MIN_IMAGE_SIZE,
-                public readonly roundedCorners = DEFAULT_ROUNDED_CORNERS,
+                public roundedCorners = DEFAULT_ROUNDED_CORNERS,
                 public readonly lineWidthFrac = DEFAULT_LINE_WIDTH_FRAC,
                 public readonly passageWidthFrac = DEFAULT_PASSAGE_WIDTH_FRAC,
                 public readonly wallColor = DEFAULT_WALL_COLOR,

@@ -4,10 +4,18 @@ export class Color {
                 public readonly blue: number,       // 0--255
                 public readonly alpha: number) {    // 0--1
     }
+}
 
-    toStyle() {
-        return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`;
-    }
+export function toRgba(color: Color) {
+    return `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha})`;
+}
+
+export function toHexCode(color: Color) {
+    const r = color.red.toString(16).padStart(2, '0');
+    const g = color.green.toString(16).padStart(2, '0');
+    const b = color.blue.toString(16).padStart(2, '0');
+    const a = Math.round(255 * color.alpha).toString(16).padStart(2, '0');
+    return `#${r}${g}${b}${a}`;
 }
 
 const hexPattern = /^[0-9a-fA-F]+$/;

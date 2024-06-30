@@ -1,5 +1,5 @@
 import { Cell } from './Cell';
-import { loadRgbas } from '@/utils/images';
+import { loadRgbas } from 'src/utils/images';
 
 function mergeRegions(cells: Cell[][], width: number, height: number, cell: Cell, c: Cell) {
     let sourceRegion: number;

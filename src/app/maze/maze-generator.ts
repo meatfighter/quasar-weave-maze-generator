@@ -1,7 +1,7 @@
 import { Maze } from './Maze';
 import { Cell } from './Cell';
 import { Node } from './Node';
-import { permutations, shuffleArray } from '@/utils/arrays';
+import { permutations, shuffleArray } from 'src/utils/arrays';
 import { solveMaze } from './maze-solver';
 import { MazeOptions } from './MazeOptions';
 

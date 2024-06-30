@@ -9,7 +9,7 @@ import {
   MIN_LOOP_PCT,
   MIN_MAZE_SIZE, MIN_PASSAGE_WIDTH_PCT, PASSAGE_WIDTH_PCT_STEP,
   useOptionsStore
-} from 'stores/optionsStore';
+} from 'src/stores/optionsStore';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 

@@ -2,7 +2,7 @@ import { Point } from './Point';
 import { Line } from './Line';
 import { Arc } from './Arc';
 import { Segment } from './Segment';
-import { HashMap } from '@/app/collections/HashMap';
+import { HashMap } from 'src/app/collections/HashMap';
 import { PathNode } from './PathNode';
 
 export class PathOptimizer {

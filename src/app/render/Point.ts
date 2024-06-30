@@ -1,4 +1,4 @@
-import { Hashable } from '@/app/collections/Hashable';
+import { Hashable } from 'src/app/collections/Hashable';
 
 const TOLERANCE = 1 / 256;
 

@@ -1,6 +1,15 @@
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { clamp } from 'src/utils/numbers';
+import {
+    onBackgroundColor,
+    onCellSize,
+    onCrossPct, onImageHeight, onImageWidth, onLineWidthPct,
+    onLongPassages,
+    onLoopPct,
+    onMazeHeight,
+    onMazeWidth, onPassageWidthPct, onSolutionColor, onSquareCorners, onWallColor
+} from 'src/app/controller/maze-controller';
 
 export const DEFAULT_MAZE_SIZE = 30;
 export const MIN_MAZE_SIZE = 1;
@@ -53,7 +62,7 @@ export const useOptionsStore = defineStore('options', () => {
         }
         if (newValue !== oldValue) {
             updateCellAndImageSize(cellSize.value, cellSize.value * newValue, cellSize.value * mazeHeight.value);
-            //onMazeWidth(newValue);
+            onMazeWidth(newValue);
         }
     });
 
@@ -65,7 +74,7 @@ export const useOptionsStore = defineStore('options', () => {
         }
         if (newValue !== oldValue) {
             updateCellAndImageSize(cellSize.value, cellSize.value * mazeWidth.value, cellSize.value * newValue);
-            //onMazeHeight(newValue);
+            onMazeHeight(newValue);
         }
     });
 
@@ -76,7 +85,7 @@ export const useOptionsStore = defineStore('options', () => {
             loopPct.value = newValue;
         }
         if (newValue !== oldValue) {
-            //onLoopPct(newValue);
+            onLoopPct(newValue);
         }
     });
 
@@ -87,14 +96,14 @@ export const useOptionsStore = defineStore('options', () => {
             crossPct.value = newValue;
         }
         if (newValue !== oldValue) {
-            //onCrossPct(newValue);
+            onCrossPct(newValue);
         }
     });
 
     const longPassages = ref(DEFAULT_LONG_PASSAGES);
     watch(longPassages, (value, oldValue) => {
         if (value !== oldValue) {
-            // onLongPassages(longPassages.value);
+            onLongPassages(longPassages.value);
         }
     });
 
@@ -133,15 +142,15 @@ export const useOptionsStore = defineStore('options', () => {
 
         if (cSize !== cellSize.value) {
             cellSize.value = cSize;
-            // onCellSize(cellSize.value);
+            onCellSize(cellSize.value);
         }
         if (imgWidth !== imageWidth.value) {
             imageWidth.value = imgWidth;
-            // onImageWidth(imageWidth.value);
+            onImageWidth(imageWidth.value);
         }
         if (imgHeight !== imageHeight.value) {
             imageHeight.value = imgHeight;
-            // onImageHeight(imageHeight.value);
+            onImageHeight(imageHeight.value);
         }
     }
 
@@ -172,7 +181,7 @@ export const useOptionsStore = defineStore('options', () => {
     const squareCorners = ref(DEFAULT_LONG_PASSAGES);
     watch(squareCorners, (value, oldValue) => {
         if (value !== oldValue) {
-            // onSquareCorners(value);
+            onSquareCorners(value);
         }
     });
 
@@ -183,7 +192,7 @@ export const useOptionsStore = defineStore('options', () => {
             lineWidthPct.value = newValue;
         }
         if (newValue !== oldValue) {
-            //onLineWidthPct(newValue);
+            onLineWidthPct(newValue);
         }
     });
 
@@ -194,28 +203,28 @@ export const useOptionsStore = defineStore('options', () => {
             passageWidthPct.value = newValue;
         }
         if (newValue !== oldValue) {
-            //onPassageWidthPct(newValue);
+            onPassageWidthPct(newValue);
         }
     });
 
     const wallColor = ref(DEFAULT_WALL_COLOR);
     watch(wallColor, (value, oldValue) => {
         if (value !== oldValue) {
-            // onWallColor(value);
+            onWallColor(value);
         }
     });
 
     const backgroundColor = ref(DEFAULT_BACKGROUND_COLOR);
     watch(backgroundColor, (value, oldValue) => {
         if (value !== oldValue) {
-            // onWallColor(value);
+            onBackgroundColor(value);
         }
     });
 
     const solutionColor = ref(DEFAULT_SOLUTION_COLOR);
     watch(solutionColor, (value, oldValue) => {
         if (value !== oldValue) {
-            // onSolutionColor(value);
+            onSolutionColor(value);
         }
     });
 
