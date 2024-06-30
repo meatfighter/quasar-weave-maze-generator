@@ -2,6 +2,10 @@ import { Hashable } from 'src/app/collections/Hashable';
 
 const TOLERANCE = 1 / 256;
 
+export function eq(a: number, b: number): boolean {
+    return Math.abs(a - b) <= TOLERANCE;
+}
+
 export class Point implements Hashable<Point> {
 
     readonly x: number;
@@ -15,16 +19,12 @@ export class Point implements Hashable<Point> {
         this.hash = Math.round(65537 * this.x) - Math.round(257 * this.y);
     }
 
-    private compare(a: number, b: number): boolean {
-        return Math.abs(a - b) <= TOLERANCE;
-    }
-
     compareX(other: Point): boolean {
-        return this.compare(this.x, other.x);
+        return eq(this.x, other.x);
     }
 
     compareY(other: Point): boolean {
-        return this.compare(this.y, other.y);
+        return eq(this.y, other.y);
     }
 
     hashCode(): number {

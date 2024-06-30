@@ -1,8 +1,11 @@
 import { StrokeData, SVG } from '@svgdotjs/svg.js';
 import { Color, toHexCode } from 'src/types/Color';
 import { Renderer } from './Renderer';
+import { eq } from 'src/app/render/Point';
 
 export class SvgRenderer implements Renderer {
+
+    private readonly K = 4 * (Math.sqrt(2) - 1) / 3;
 
     private svg = SVG().addTo('body');
 
@@ -53,57 +56,69 @@ export class SvgRenderer implements Renderer {
         return this;
     }
 
-    // private isCollinear(x0: number, y0: number, x1: number, y1: number, x2: number, y2: number) {
-    //     return Math.abs((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0))
-    //             < 1E-6 * Math.abs(Math.max(x0, y0, x1, y1, x2, y2));
-    // }
+    arcTo(x1: number, _y1: number, x2: number, y2: number, radius: number): Renderer {
 
-    private isClockwise(x0: number, y0: number, x1: number, y1: number, x2: number, y2: number) {
-        return (x0 - x1) * (y2 - y1) - (y0 - y1) * (x2 - x1) < 0;
-    }
+        const kRadius = this.K * radius;
 
-    // private dist(x0: number, y0: number, x1: number, y1: number) {
-    //     const dx = x1 - x0;
-    //     const dy = y1 - y0;
-    //     return Math.sqrt(dx * dx + dy * dy);
-    // }
+        let ax: number;
+        let ay: number;
+        let bx: number;
+        let by: number;
+        if (eq(x1, x2)) {
+            if (this.x0 < x2) {
+                if (y2 < this.y0) {
+                    ax = this.x0 + kRadius;
+                    ay = y2 + radius;
+                    bx = this.x0 + radius;
+                    by = y2 + kRadius;
+                } else {
+                    ax = this.x0 + kRadius;
+                    ay = y2 - radius;
+                    bx = this.x0 + radius;
+                    by = y2 - kRadius;
+                }
+            } else {
+                if (y2 < this.y0) {
+                    ax = this.x0 - kRadius;
+                    ay = y2 + radius;
+                    bx = this.x0 - radius;
+                    by = y2 + kRadius;
+                } else {
+                    ax = this.x0 - kRadius;
+                    ay = y2 - radius;
+                    bx = this.x0 - radius;
+                    by = y2 - kRadius;
+                }
+            }
+        } else {
+            if (this.y0 < y2) {
+                if (x2 < this.x0) {
+                    ax = x2 + radius;
+                    ay = this.y0 + kRadius;
+                    bx = x2 + kRadius;
+                    by = this.y0 + radius;
+                } else {
+                    ax = x2 - radius;
+                    ay = this.y0 + kRadius;
+                    bx = x2 - kRadius;
+                    by = this.y0 + radius;
+                }
+            } else {
+                if (x2 < this.x0) {
+                    ax = x2 + radius;
+                    ay = this.y0 - kRadius;
+                    bx = x2 + kRadius;
+                    by = this.y0 - radius;
+                } else {
+                    ax = x2 - radius;
+                    ay = this.y0 - kRadius;
+                    bx = x2 - kRadius;
+                    by = this.y0 - radius;
+                }
+            }
+        }
 
-    // arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): Renderer {
-    //     if (radius <= 0) {
-    //         return this.lineTo(x1, y1).lineTo(x2, y2);
-    //     }
-    //     if ((this.x0 === x1 && this.y0 === y1) || (x1 === x2 && y1 === y2)
-    //             || this.isCollinear(this.x0, this.y0, x1, y1, x2, y2)) {
-    //         return this.lineTo(x2, y2);
-    //     }
-    //
-    //     const sweep = this.isClockwise(this.x0, this.y0, x1, y1, x2, y1) ? 1 : 0;
-    //
-    //     const d02 = this.dist(this.x0, this.y0, x2, y2);
-    //     const d01 = this.dist(this.x0, this.y0, x1, y1);
-    //     const d12 = this.dist(x1, y1, x2, y2);
-    //
-    //     const ds = d02 + d01 + d12;
-    //     const cx = (d12 * this.x0 + d02 * x1 + d01 * x2) / ds;
-    //     const cy = (d12 * this.y0 + d02 * y1 + d01 * y2) / ds;
-    //
-    //     const px = (x1 + x2) / 2 + (d02 - d01) * (x1 - x2) / (2 * d12);
-    //     const py = (y1 + y2) / 2 + (d02 - d01) * (y1 - y2) / (2 * d12);
-    //
-    //     const k = radius / this.dist(px, py, cx, cy);
-    //     const dx = x1 + k * (px - x1);
-    //     const dy = y1 + k * (py - y1);
-    //
-    //     this.path += `A ${radius} ${radius} 0 0 ${sweep} ${dx} ${dy}`;
-    //
-    //     this.x0 = x2;
-    //     this.y0 = y2;
-    //     return this;
-    // }
-
-    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): Renderer {
-        const sweep = this.isClockwise(this.x0, this.y0, x1, y1, x2, y1) ? 1 : 0;
-        this.path += `A ${radius} ${radius} 0 0 ${sweep} ${(x1 + x2) / 2} ${(y1 + y2) / 2}`;
+        this.path += `C ${ax} ${ay} ${bx} ${by} ${x2} ${y2} `;
 
         this.x0 = x2;
         this.y0 = y2;
