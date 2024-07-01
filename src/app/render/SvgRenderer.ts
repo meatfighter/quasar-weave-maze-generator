@@ -16,8 +16,8 @@ export class SvgRenderer extends CurveRenderer {
         return this;
     }
 
-    setStroke(linecap: string, lineWidth: number, color: Color): Renderer {
-        this.strokeData = { linecap, width: lineWidth, color: toHexCode(color) };
+    setStroke(lineCap: string, lineWidth: number, color: Color): Renderer {
+        this.strokeData = { linecap: lineCap, width: lineWidth, color: toHexCode(color) };
         return this;
     }
 

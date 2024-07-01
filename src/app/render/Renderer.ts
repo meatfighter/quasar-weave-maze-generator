@@ -2,7 +2,7 @@ import { Color } from 'src/types/Color';
 
 export interface Renderer {
     setSize(width: number, height: number): Renderer;
-    setStroke(linecap: string, lineWidth: number, color: Color): Renderer;
+    setStroke(lineCap: string, lineWidth: number, color: Color): Renderer;
     setFill(color: Color): Renderer;
     fillRect(x: number, y: number, w: number, h: number): Renderer;
     beginPath(): Renderer;
