@@ -19,19 +19,29 @@ const blob = renderMaze(maze, renderOptions);
 function updateSvg() {
   const url = URL.createObjectURL(blob);
   if (svgImage.value) {
+    svgImage.value.style.visibility = 'hidden';
     svgImage.value.onload = () => {
       if (svgContainer.value && svgImage.value) {
         const containerRect = svgContainer.value.getBoundingClientRect();
         const imageRect = svgImage.value.getBoundingClientRect();
-
-        const centerX = (containerRect.width - imageRect.width) / 2;
-        const centerY = (containerRect.height - imageRect.height) / 2;
-
-        const panzoomInstance = panzoom(svgImage.value);
-        panzoomInstance.moveTo(centerX, centerY);
+        panzoom(svgImage.value).moveTo((containerRect.width - imageRect.width) / 2,
+            (containerRect.height - imageRect.height) / 2);
+        svgImage.value.style.visibility = 'visible';
       }
     };
     svgImage.value.src = url;
+  }
+}
+
+function onMouseDown() {
+  if (svgImage.value) {
+    svgImage.value.style.cursor = 'grabbing';
+  }
+}
+
+function onMouseUp() {
+  if (svgImage.value) {
+    svgImage.value.style.cursor = 'grab';
   }
 }
 
@@ -41,8 +51,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="svgContainer" id="svgContainer" style="border: 1px solid black; width: 100%; height: 100%; overflow: hidden;">
-    <img ref="svgImage" />
+  <div ref="svgContainer" id="svgContainer" style="width: 100%; height: 100%; overflow: hidden;">
+    <img ref="svgImage" id="svgImage" src="" alt="maze" style="visibility: hidden; cursor: grab;"
+         @mousedown="onMouseDown" @mouseup="onMouseUp" @mouseleave="onMouseUp" />
   </div>
 </template>
 
