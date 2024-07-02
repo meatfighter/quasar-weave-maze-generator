@@ -5,7 +5,7 @@ import MainFooter from 'components/MainFooter.vue';
 </script>
 
 <template>
-  <q-layout view="hHh lpr fFf" style="overflow: hidden;">
+  <q-layout view="hHh lpr fFf">
 
     <MainHeader/>
 
