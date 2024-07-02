@@ -57,7 +57,7 @@ export class PdfRenderer extends CurveRenderer {
         return this;
     }
 
-    toBlob(): Blob {
-        return this.doc.output('blob');
+    toBlob(): Promise<Blob> {
+        return Promise.resolve(this.doc.output('blob'));
     }
 }

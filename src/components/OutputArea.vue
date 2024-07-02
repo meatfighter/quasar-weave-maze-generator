@@ -10,13 +10,12 @@ import { Color } from 'src/types/Color';
 const svgContainer = ref<HTMLDivElement | null>(null);
 const svgImage = ref<HTMLImageElement | null>(null);
 
-const mazeOptions = new MazeOptions();
-const renderOptions = new RenderOptions('test');
-renderOptions.backgroundColor = new Color(255, 255, 255, 1);
-const maze = generateMaze(mazeOptions);
-const blob = renderMaze(maze, renderOptions);
-
-function updateSvg() {
+async function updateSvg() {
+  const mazeOptions = new MazeOptions();
+  const renderOptions = new RenderOptions('test');
+  renderOptions.backgroundColor = new Color(255, 255, 255, 1);
+  const maze = generateMaze(mazeOptions);
+  const blob = await renderMaze(maze, renderOptions);
   const url = URL.createObjectURL(blob);
   if (svgImage.value) {
     svgImage.value.style.visibility = 'hidden';
@@ -46,7 +45,7 @@ function onMouseUp() {
 }
 
 onMounted(() => {
-  updateSvg();
+  void updateSvg();
 });
 </script>
 

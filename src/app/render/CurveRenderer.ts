@@ -12,9 +12,11 @@ export abstract class CurveRenderer implements Renderer {
     abstract setSize(width: number, height: number): Renderer;
     abstract setStroke(linecap: string, lineWidth: number, color: Color): Renderer;
     abstract stroke(): Renderer;
-    abstract toBlob(): Blob;
+    abstract toBlob(): Promise<Blob>;
 
+    // https://spencermortensen.com/articles/bezier-circle/
     private readonly K = 0.5519150244935106;
+
     protected x0 = 0;
     protected y0 = 0;
 

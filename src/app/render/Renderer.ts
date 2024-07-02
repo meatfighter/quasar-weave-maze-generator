@@ -10,5 +10,5 @@ export interface Renderer {
     lineTo(x: number, y: number): Renderer;
     arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): Renderer;
     stroke(): Renderer;
-    toBlob(): Blob;
+    toBlob(): Promise<Blob>;
 }

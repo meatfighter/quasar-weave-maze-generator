@@ -357,7 +357,7 @@ function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number)
 //     }
 // }
 
-export function renderMaze(maze: Maze, renderOptions: RenderOptions): Blob {
+export function renderMaze(maze: Maze, renderOptions: RenderOptions): Promise<Blob> {
     const cellMarginFrac = (1 - renderOptions.passageWidthFrac) / 2;
     const solutionPaths: Segment[][] | undefined = renderOptions.solution
             ? generateSolutionPaths(maze, renderOptions.cellSize, cellMarginFrac) : undefined;

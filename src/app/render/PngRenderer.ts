@@ -54,7 +54,7 @@ export class PngRenderer implements Renderer {
         return this;
     }
 
-    toBlob(): Blob {
-
+    toBlob(): Promise<Blob> {
+        return this.canvas.convertToBlob();
     }
 }
