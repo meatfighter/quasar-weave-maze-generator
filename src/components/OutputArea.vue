@@ -50,10 +50,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="svgContainer" id="svgContainer" style="width: 100%; height: 100%; overflow: hidden;">
-    <img ref="svgImage" id="svgImage" src="" alt="maze" style="visibility: hidden; cursor: grab;"
-         @mousedown="onMouseDown" @mouseup="onMouseUp" @mouseleave="onMouseUp" />
-  </div>
+    <div ref="svgContainer" id="svgContainer" style="width: 100%; height: 100%; overflow: hidden;">
+      <q-scroll-area style="width: 100%; height: 100%; overflow: hidden;">
+        <img ref="svgImage" id="svgImage" src="" alt="maze" style="visibility: hidden; cursor: grab;"
+             @mousedown="onMouseDown" @mouseup="onMouseUp" @mouseleave="onMouseUp" />
+      </q-scroll-area>
+    </div>
 </template>
 
 <style scoped>
