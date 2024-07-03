@@ -23,8 +23,42 @@ async function updateSvg() {
       if (svgContainer.value && svgImage.value) {
         const containerRect = svgContainer.value.getBoundingClientRect();
         const imageRect = svgImage.value.getBoundingClientRect();
-        panzoom(svgImage.value).moveTo((containerRect.width - imageRect.width) / 2,
-            (containerRect.height - imageRect.height) / 2);
+        let { width: w1, height: h1 } = imageRect;
+        let { width: w2, height: h2 } = imageRect;
+
+        if (w1 > containerRect.width) {
+            w1 = containerRect.width;
+            h1 = w1 * imageRect.height / imageRect.width;
+        }
+        if (h1 > containerRect.height) {
+          h1 = containerRect.height;
+          w1 = h1 * imageRect.width / imageRect.height;
+        }
+
+        if (h2 > containerRect.height) {
+          h2 = containerRect.height;
+          w2 = h2 * imageRect.width / imageRect.height;
+        }
+        if (w2 > containerRect.width) {
+          w2 = containerRect.width;
+          h2 = w2 * imageRect.height / imageRect.width;
+        }
+
+        let width: number;
+        let height: number;
+        if (w1 > w2) {
+          width = w1;
+          height = h1;
+        } else {
+          width = w2;
+          height = h2;
+        }
+
+        const pz = panzoom(svgImage.value);
+        if (width !== imageRect.width) {
+          pz.zoomTo(0, 0,width / imageRect.width);
+        }
+        pz.moveTo((containerRect.width - width) / 2, (containerRect.height - height) / 2);
         svgImage.value.style.visibility = 'visible';
       }
     };

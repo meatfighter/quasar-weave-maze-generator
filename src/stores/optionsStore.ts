@@ -8,7 +8,7 @@ import {
     onLongPassages,
     onLoopPct,
     onMazeHeight,
-    onMazeWidth, onPassageWidthPct, onSolutionColor, onSquareCorners, onWallColor
+    onMazeWidth, onPassageWidthPct, onSolution, onSolutionColor, onSquareCorners, onWallColor
 } from 'src/app/controller/maze-controller';
 
 export const DEFAULT_MAZE_SIZE = 30;
@@ -52,6 +52,8 @@ export const PASSAGE_WIDTH_PCT_STEP = 1;
 export const DEFAULT_WALL_COLOR = '#000000FF';
 export const DEFAULT_BACKGROUND_COLOR = '#FFFFFFFF';
 export const DEFAULT_SOLUTION_COLOR = '#FF0000FF';
+
+export const DEFAULT_SOLUTION = false;
 
 export const useOptionsStore = defineStore('options', () => {
     const mazeWidth = ref(DEFAULT_MAZE_SIZE);
@@ -228,6 +230,13 @@ export const useOptionsStore = defineStore('options', () => {
         }
     });
 
+    const solution = ref(DEFAULT_SOLUTION);
+    watch(solution, (value, oldValue) => {
+        if (value !== oldValue) {
+            onSolution(value);
+        }
+    });
+
     function reset() {
         mazeWidth.value = DEFAULT_MAZE_SIZE;
         mazeHeight.value = DEFAULT_MAZE_SIZE;
@@ -243,8 +252,9 @@ export const useOptionsStore = defineStore('options', () => {
         wallColor.value = DEFAULT_WALL_COLOR;
         backgroundColor.value = DEFAULT_BACKGROUND_COLOR;
         solutionColor.value = DEFAULT_SOLUTION_COLOR;
+        solution.value = DEFAULT_SOLUTION;
     }
 
     return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,
-            lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, reset };
+            lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, solution, reset };
 });

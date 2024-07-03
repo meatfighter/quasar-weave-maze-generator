@@ -15,7 +15,7 @@ import { computed } from 'vue';
 
 const optionsStore = useOptionsStore();
 const { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,
-    lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor } = storeToRefs(optionsStore);
+    lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, solution } = storeToRefs(optionsStore);
 
 const formattedCellSize = computed({
   get() {
@@ -103,6 +103,11 @@ const formattedImageHeight = computed({
         </q-icon>
       </template>
     </q-input>
+    <q-field label="Solution" filled stack-label>
+      <template v-slot:control>
+        <q-toggle v-model="solution"></q-toggle>
+      </template>
+    </q-field>
   </q-scroll-area>
 </template>
 

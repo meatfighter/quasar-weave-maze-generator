@@ -53,3 +53,7 @@ export function onBackgroundColor(backgroundColor: string) {
 export function onSolutionColor(solutionColor: string) {
     console.log(solutionColor);
 }
+
+export function onSolution(solution: boolean) {
+    console.log(solution);
+}
