@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { clamp } from 'src/utils/numbers';
 import {
     onBackgroundColor,
@@ -237,6 +237,24 @@ export const useOptionsStore = defineStore('options', () => {
         }
     });
 
+    const resettable = computed(() =>
+        mazeWidth.value !== DEFAULT_MAZE_SIZE
+            || mazeHeight.value !== DEFAULT_MAZE_SIZE
+            || loopPct.value !== DEFAULT_LOOP_PCT
+            || crossPct.value !== DEFAULT_CROSS_PCT
+            || longPassages.value !== DEFAULT_LONG_PASSAGES
+            || cellSize.value !== DEFAULT_CELL_SIZE
+            || imageWidth.value !== DEFAULT_IMAGE_SIZE
+            || imageHeight.value !== DEFAULT_IMAGE_SIZE
+            || squareCorners.value !== DEFAULT_SQUARE_CORNERS
+            || lineWidthPct.value !== DEFAULT_LINE_WIDTH_PCT
+            || passageWidthPct.value !== DEFAULT_PASSAGE_WIDTH_PCT
+            || wallColor.value !== DEFAULT_WALL_COLOR
+            || backgroundColor.value !== DEFAULT_BACKGROUND_COLOR
+            || solutionColor.value !== DEFAULT_SOLUTION_COLOR
+            || solution.value !== DEFAULT_SOLUTION
+    );
+
     function reset() {
         mazeWidth.value = DEFAULT_MAZE_SIZE;
         mazeHeight.value = DEFAULT_MAZE_SIZE;
@@ -256,5 +274,5 @@ export const useOptionsStore = defineStore('options', () => {
     }
 
     return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,
-            lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, solution, reset };
+            lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, solution, resettable, reset };
 });

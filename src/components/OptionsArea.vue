@@ -15,7 +15,9 @@ import { computed } from 'vue';
 
 const optionsStore = useOptionsStore();
 const { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,
-    lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, solution } = storeToRefs(optionsStore);
+    lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, solution, resettable }
+        = storeToRefs(optionsStore);
+const { reset } = optionsStore;
 
 const formattedCellSize = computed({
   get() {
@@ -113,7 +115,7 @@ const formattedImageHeight = computed({
     </q-input>
 
     <div class="q-ma-md row justify-center">
-      <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" />
+      <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" :disable="!resettable" @click="reset" />
     </div>
   </q-scroll-area>
 </template>
