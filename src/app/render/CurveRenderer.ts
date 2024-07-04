@@ -1,5 +1,5 @@
 import { Renderer } from 'src/app/render/Renderer';
-import { Color } from 'src/types/Color';
+import { Color } from 'src/app/color/Color';
 import { eq } from 'src/app/render/Point';
 
 export abstract class CurveRenderer implements Renderer {

@@ -3,7 +3,8 @@ import { Cell } from './Cell';
 import { Node } from './Node';
 import { permutations, shuffleArray } from 'src/utils/arrays';
 import { solveMaze } from './maze-solver';
-import { MazeOptions } from './MazeOptions';
+import { GenerateMazeTask } from 'src/app/maze/GenerateMazeTask';
+import { isCancelled, Task } from 'src/app/worker/Task';
 
 function assignRegion(region: number, seed: Node, stack: Node[]): Node[] {
 
@@ -456,7 +457,7 @@ function addCross(maze: Maze, cell: Cell, stack: Node[], northSouthHopsEastWest:
     return true;
 }
 
-function addLoopsAndCrosses(maze: Maze, loopFraction: number, crossFraction: number, stack: Node[]) {
+async function addLoopsAndCrosses(maze: Maze, loopFraction: number, crossFraction: number, stack: Node[], task: Task) {
 
     const cells: Cell[] = [];
     for (let i = maze.height - 2; i >= 1; --i) {
@@ -470,6 +471,9 @@ function addLoopsAndCrosses(maze: Maze, loopFraction: number, crossFraction: num
     let loops = 0;
     const maxLoops = Math.round(cells.length * loopFraction);
     while (loops < maxLoops && cells.length > 0) {
+        if (await isCancelled(task)) {
+            return;
+        }
         const index = Math.floor(cells.length * Math.random());
         const cell = cells[index];
         cells.splice(index, 1);
@@ -513,6 +517,9 @@ function addLoopsAndCrosses(maze: Maze, loopFraction: number, crossFraction: num
     let crosses = 0;
     const maxCrosses = Math.round(cells.length * crossFraction);
     while (crosses < maxCrosses && cells.length > 0) {
+        if (await isCancelled(task)) {
+            return;
+        }
         const index = Math.floor(cells.length * Math.random());
         const cell = cells[index];
         cells.splice(index, 1);
@@ -544,7 +551,7 @@ function moveToEnd(nodes: Node[], node: Node) {
     nodes.push(node);
 }
 
-function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], longCorridors: boolean) {
+async function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], longCorridors: boolean, task: Task) {
 
     const maxX = maze.width - 1;
     const maxY = maze.height - 1;
@@ -563,6 +570,10 @@ function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], longCo
     }
 
     outer: while (nodes.length > 0) {
+        if (await isCancelled(task)) {
+            return;
+        }
+
         const index = longCorridors ? nodes.length - 1 : Math.floor(nodes.length * Math.random());
         const node = nodes[index];
         if (longCorridors) {
@@ -652,12 +663,18 @@ function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], longCo
     }
 }
 
-export function generateMaze(options: MazeOptions): Maze {
-    const maze = new Maze(options);
+export async function generateMaze(task: GenerateMazeTask): Promise<Maze> {
+    const maze = new Maze(task.options);
     const stack: Node[] = [];
-    addLoopsAndCrosses(maze, options.loopFrac, options.crossFrac, stack);
+    await addLoopsAndCrosses(maze, task.options.loopFrac, task.options.crossFrac, stack, task);
+    if (await isCancelled(task)) {
+        return maze;
+    }
     const regions = assignRegions(maze, stack);
-    createSpanningTree(maze, stack, regions, options.longPassages);
-    solveMaze(maze);
+    await createSpanningTree(maze, stack, regions, task.options.longPassages, task);
+    if (await isCancelled(task)) {
+        return maze;
+    }
+    await solveMaze(maze, task);
     return maze;
 }

@@ -1,5 +1,5 @@
 import { Renderer } from 'src/app/render/Renderer';
-import { Color, toRgba } from 'src/types/Color';
+import { Color, toRgba } from 'src/app/color/Color';
 
 export class PngRenderer implements Renderer {
 

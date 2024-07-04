@@ -1,4 +1,4 @@
-import { Color } from 'src/types/Color';
+import { Color } from 'src/app/color/Color';
 
 export interface Renderer {
     setSize(width: number, height: number): Renderer;

@@ -8,7 +8,7 @@ import { Line } from './Line';
 import { Arc } from './Arc';
 import {
     // DEFAULT_PNG_BACKGROUND_COLOR,
-    DEFAULT_SVG_AND_PDF_BACKGROUND_COLOR,
+    // DEFAULT_SVG_AND_PDF_BACKGROUND_COLOR,
     RenderOptions
 } from './RenderOptions';
 // import { PaperSize } from './PaperSize';
@@ -16,6 +16,7 @@ import {
 // import { toFileExtensions } from './FileFormat';
 import { Renderer } from 'src/app/render/Renderer';
 import { SvgRenderer } from 'src/app/render/SvgRenderer';
+import { RenderMazeTask } from 'src/app/render/RenderMazeTask';
 
 // const SOLUTION_SUFFIX = '-solution';
 
@@ -357,25 +358,24 @@ function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number)
 //     }
 // }
 
-export function renderMaze(maze: Maze, renderOptions: RenderOptions): Promise<Blob> {
+export async function renderMaze(task: RenderMazeTask): Promise<Blob> {
+    const { maze, options: renderOptions } = task;
+
     const cellMarginFrac = (1 - renderOptions.passageWidthFrac) / 2;
     const solutionPaths: Segment[][] | undefined = renderOptions.solution
             ? generateSolutionPaths(maze, renderOptions.cellSize, cellMarginFrac) : undefined;
     const wallPaths = generateWallPaths(maze, renderOptions.cellSize, cellMarginFrac);
 
     const renderer = new SvgRenderer();
-    renderer.setSize(renderOptions.cellSize * maze.width, renderOptions.cellSize * maze.height);
+    renderer.setSize(renderOptions.imageWidth, renderOptions.imageHeight);
 
     const linecap = renderOptions.roundedCorners ? 'round' : 'square';
     const lineWidth = renderOptions.lineWidthFrac * renderOptions.cellSize;
 
-    let backgroundColor = renderOptions.backgroundColor;
-    if (!backgroundColor) {
-        backgroundColor = DEFAULT_SVG_AND_PDF_BACKGROUND_COLOR;
-    }
-    if (backgroundColor.alpha > 0) {
-        renderer.setFill(backgroundColor).fillRect(0, 0, renderOptions.cellSize * maze.width, renderOptions.cellSize * maze.height);
-    }
+    // let backgroundColor = renderOptions.backgroundColor;
+    // if (backgroundColor.alpha > 0) {
+    //     renderer.setFill(backgroundColor).fillRect(0, 0, renderOptions.imageWidth, renderOptions.imageHeight);
+    // }
 
     if (solutionPaths && renderOptions.solutionColor.alpha > 0) {
         renderer.setStroke(linecap, lineWidth, renderOptions.solutionColor);

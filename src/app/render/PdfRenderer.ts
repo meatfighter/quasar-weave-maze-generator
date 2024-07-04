@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { Renderer } from 'src/app/render/Renderer';
-import { Color, toHexCode } from 'src/types/Color';
+import { Color, toHexCode } from 'src/app/color/Color';
 import { CurveRenderer } from 'src/app/render/CurveRenderer';
 
 export class PdfRenderer extends CurveRenderer {

@@ -2,6 +2,7 @@ import { Maze } from './Maze';
 import { Cell } from './Cell';
 import { Node } from './Node';
 import { permutations, shuffleArray } from 'src/utils/arrays';
+import { isCancelled, Task } from 'src/app/worker/Task';
 
 function findBorderNodes(maze: Maze): Set<Node> {
     const cells = maze.cells;
@@ -167,10 +168,15 @@ function wireSolution(solution: Node[], maze: Maze) {
     }
 }
 
-export function solveMaze(maze: Maze) {
+export async function solveMaze(maze: Maze, task: Task) {
     const borderNodes = findBorderNodes(maze);
     const bestSolution: Node[] = [];
     const stack: Node[] = [];
-    borderNodes.forEach(node => flood(node, maze, borderNodes, bestSolution, stack));
+    for (const node of borderNodes) {
+        if (await isCancelled(task)) {
+            return;
+        }
+        flood(node, maze, borderNodes, bestSolution, stack);
+    }
     wireSolution(bestSolution, maze);
 }

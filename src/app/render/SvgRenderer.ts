@@ -1,5 +1,5 @@
 import { StrokeData, SVG } from '@svgdotjs/svg.js';
-import { Color, toHexCode } from 'src/types/Color';
+import { Color, toHexCode } from 'src/app/color/Color';
 import { Renderer } from './Renderer';
 import { CurveRenderer } from 'src/app/render/CurveRenderer';
 

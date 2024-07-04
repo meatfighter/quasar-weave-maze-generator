@@ -1,4 +1,4 @@
-import Rgbas from 'src/types/Rgbas';
+import Rgbas from 'src/app/color/Rgbas';
 
 export async function loadRgbas(src: string, displayName?: string): Promise<Rgbas> {
     return new Promise<Rgbas>((resolve, reject) => {

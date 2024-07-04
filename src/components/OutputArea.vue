@@ -5,7 +5,7 @@ import { MazeOptions } from 'src/app/maze/MazeOptions';
 import { RenderOptions } from 'src/app/render/RenderOptions';
 import { generateMaze } from 'src/app/maze/maze-generator';
 import { renderMaze } from 'src/app/render/maze-renderer';
-import { Color } from 'src/types/Color';
+import { Color } from 'src/app/color/Color';
 
 const svgContainer = ref<HTMLDivElement | null>(null);
 const svgImage = ref<HTMLImageElement | null>(null);
