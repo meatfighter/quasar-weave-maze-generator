@@ -108,6 +108,10 @@ const formattedImageHeight = computed({
         <q-toggle v-model="solution"></q-toggle>
       </template>
     </q-field>
+    <div class="q-ma-md row justify-center">
+      <q-btn icon="restart_alt" rounded color="primary" no-caps label="Reset All" />
+      <q-tooltip>Reset All</q-tooltip>
+    </div>
   </q-scroll-area>
 </template>
 
