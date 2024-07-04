@@ -61,17 +61,25 @@ const formattedImageHeight = computed({
         <q-toggle v-model="longPassages"></q-toggle>
       </template>
     </q-field>
+
+    <q-separator></q-separator>
+
+    <q-field label="Solution" filled stack-label>
+      <template v-slot:control>
+        <q-toggle v-model="solution"></q-toggle>
+      </template>
+    </q-field>
+    <q-field label="Square Corners" filled stack-label>
+      <template v-slot:control>
+        <q-toggle v-model="squareCorners"></q-toggle>
+      </template>
+    </q-field>
     <q-input label="Cell Size (px)" v-model.number="formattedCellSize" type="number" filled :min="MIN_CELL_SIZE"
              :step="CELL_SIZE_STEP"/>
     <q-input label="Image Width (px)" v-model.number="formattedImageWidth" type="number" filled :min="MIN_IMAGE_SIZE"
              :max="MAX_IMAGE_SIZE" :step="IMAGE_SIZE_STEP"/>
     <q-input label="Image Height (px)" v-model.number="formattedImageHeight" type="number" filled :min="MIN_IMAGE_SIZE"
              :max="MAX_IMAGE_SIZE" :step="IMAGE_SIZE_STEP"/>
-    <q-field label="Square Corners" filled stack-label>
-      <template v-slot:control>
-        <q-toggle v-model="squareCorners"></q-toggle>
-      </template>
-    </q-field>
     <q-input label="Line Width (%)" v-model.number="lineWidthPct" type="number" filled :min="MIN_LINE_WIDTH_PCT"
              :max="MAX_LINE_WIDTH_PCT" :step="LINE_WIDTH_PCT_STEP"/>
     <q-input label="Passage Width (%)" v-model.number="passageWidthPct" type="number" filled :min="MIN_PASSAGE_WIDTH_PCT"
@@ -103,14 +111,9 @@ const formattedImageHeight = computed({
         </q-icon>
       </template>
     </q-input>
-    <q-field label="Solution" filled stack-label>
-      <template v-slot:control>
-        <q-toggle v-model="solution"></q-toggle>
-      </template>
-    </q-field>
+
     <div class="q-ma-md row justify-center">
-      <q-btn icon="restart_alt" rounded color="primary" no-caps label="Reset All" />
-      <q-tooltip>Reset All</q-tooltip>
+      <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" />
     </div>
   </q-scroll-area>
 </template>
