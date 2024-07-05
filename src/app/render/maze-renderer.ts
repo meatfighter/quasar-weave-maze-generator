@@ -372,10 +372,10 @@ export async function renderMaze(task: RenderMazeTask): Promise<Blob> {
     const linecap = renderOptions.roundedCorners ? 'round' : 'square';
     const lineWidth = renderOptions.lineWidthFrac * renderOptions.cellSize;
 
-    // let backgroundColor = renderOptions.backgroundColor;
-    // if (backgroundColor.alpha > 0) {
-    //     renderer.setFill(backgroundColor).fillRect(0, 0, renderOptions.imageWidth, renderOptions.imageHeight);
-    // }
+    const backgroundColor = renderOptions.backgroundColor;
+    if (backgroundColor.alpha > 0) {
+        renderer.setFill(backgroundColor).fillRect(0, 0, renderOptions.imageWidth, renderOptions.imageHeight);
+    }
 
     if (solutionPaths && renderOptions.solutionColor.alpha > 0) {
         renderer.setStroke(linecap, lineWidth, renderOptions.solutionColor);

@@ -10,6 +10,10 @@ export function toRgba(color: Color) {
     return `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha})`;
 }
 
+export function toRgb(color: Color) {
+    return `rgb(${100 * color.red / 0xFF}%, ${100 * color.green / 0xFF}%, ${100 * color.blue / 0xFF}%)`;
+}
+
 export function toHexCode(color: Color) {
     const r = color.red.toString(16).padStart(2, '0');
     const g = color.green.toString(16).padStart(2, '0');
