@@ -118,11 +118,13 @@ function updateRender() {
         return;
     }
     if (runningRenderTaskId) {
+        console.log('--c1');
         worker.postMessage(new Message(MessageType.CANCEL, runningRenderTaskId));
         runningRenderTaskId = null;
     }
     runningRenderTaskId = taskSequence.toString();
     ++taskSequence;
+    console.log('--c2');
     worker.postMessage(new Message(MessageType.RENDER_MAZE, new RenderMazeTask(runningRenderTaskId, maze,
             new RenderOptions(solution, roundedCorners, cellSize, imageWidth, imageHeight, lineWidthFrac,
                     passageWidthFrac, wallColor, solutionColor, backgroundColor))));

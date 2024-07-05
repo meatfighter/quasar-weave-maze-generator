@@ -11,6 +11,7 @@ import { RenderResponse } from 'src/app/render/RenderResponse';
 
 self.onmessage = <T>(event: MessageEvent<Message<T>>) => {
     const message = event.data;
+    console.log(`message: ${message}`);
     switch (message.type) {
         case MessageType.GENERATE_MAZE:
             void onGenerateMaze(message.data as GenerateMazeTask);
