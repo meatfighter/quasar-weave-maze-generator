@@ -6,11 +6,11 @@ import { Segment } from './Segment';
 import { Point } from './Point';
 import { Line } from './Line';
 import { Arc } from './Arc';
-import {
-    // DEFAULT_PNG_BACKGROUND_COLOR,
-    // DEFAULT_SVG_AND_PDF_BACKGROUND_COLOR,
-    RenderOptions
-} from './RenderOptions';
+// import {
+//      DEFAULT_PNG_BACKGROUND_COLOR,
+//     DEFAULT_SVG_AND_PDF_BACKGROUND_COLOR,
+//     RenderOptions
+// } from './RenderOptions';
 // import { PaperSize } from './PaperSize';
 // import { getTimestamp } from 'src/utils/time';
 // import { toFileExtensions } from './FileFormat';

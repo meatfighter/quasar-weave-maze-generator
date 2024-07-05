@@ -10,50 +10,31 @@ import {
     onMazeHeight,
     onMazeWidth, onPassageWidthPct, onSolution, onSolutionColor, onSquareCorners, onWallColor
 } from 'src/app/controller/maze-controller';
-
-export const DEFAULT_MAZE_SIZE = 30;
-export const MIN_MAZE_SIZE = 1;
-export const MAX_MAZE_SIZE = 200;
-export const MAZE_SIZE_STEP = 1;
-
-export const DEFAULT_LOOP_PCT = 5;
-export const MIN_LOOP_PCT = 0;
-export const MAX_LOOP_PCT = 100;
-export const LOOP_PCT_STEP = 1;
-
-export const DEFAULT_CROSS_PCT = 25;
-export const MIN_CROSS_PCT = 0;
-export const MAX_CROSS_PCT = 100;
-export const CROSS_PCT_STEP = 1;
-
-export const DEFAULT_LONG_PASSAGES = false;
-
-export const DEFAULT_CELL_SIZE = 25;
-export const MIN_CELL_SIZE = 1;
-export const CELL_SIZE_STEP = 1;
-
-export const DEFAULT_IMAGE_SIZE = DEFAULT_MAZE_SIZE * DEFAULT_CELL_SIZE;
-export const MIN_IMAGE_SIZE = 1;
-export const MAX_IMAGE_SIZE = 10_000;
-export const IMAGE_SIZE_STEP = 1;
-
-export const DEFAULT_SQUARE_CORNERS = false;
-
-export const DEFAULT_LINE_WIDTH_PCT = 15;
-export const MIN_LINE_WIDTH_PCT = 0;
-export const MAX_LINE_WIDTH_PCT = 100;
-export const LINE_WIDTH_PCT_STEP = 1;
-
-export const DEFAULT_PASSAGE_WIDTH_PCT = 70;
-export const MIN_PASSAGE_WIDTH_PCT = 0;
-export const MAX_PASSAGE_WIDTH_PCT = 100;
-export const PASSAGE_WIDTH_PCT_STEP = 1;
-
-export const DEFAULT_WALL_COLOR = '#000000FF';
-export const DEFAULT_BACKGROUND_COLOR = '#FFFFFFFF';
-export const DEFAULT_SOLUTION_COLOR = '#FF0000FF';
-
-export const DEFAULT_SOLUTION = false;
+import {
+    DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_CELL_SIZE,
+    DEFAULT_CROSS_PCT,
+    DEFAULT_IMAGE_SIZE,
+    DEFAULT_LINE_WIDTH_PCT,
+    DEFAULT_LONG_PASSAGES,
+    DEFAULT_LOOP_PCT,
+    DEFAULT_MAZE_SIZE,
+    DEFAULT_PASSAGE_WIDTH_PCT, DEFAULT_SOLUTION, DEFAULT_SOLUTION_COLOR, DEFAULT_SQUARE_CORNERS,
+    DEFAULT_WALL_COLOR,
+    MAX_CROSS_PCT,
+    MAX_IMAGE_SIZE,
+    MAX_LINE_WIDTH_PCT,
+    MAX_LOOP_PCT,
+    MAX_MAZE_SIZE,
+    MAX_PASSAGE_WIDTH_PCT,
+    MIN_CELL_SIZE,
+    MIN_CROSS_PCT,
+    MIN_IMAGE_SIZE,
+    MIN_LINE_WIDTH_PCT,
+    MIN_LOOP_PCT,
+    MIN_MAZE_SIZE,
+    MIN_PASSAGE_WIDTH_PCT
+} from 'src/app/controller/defaults';
 
 export const useOptionsStore = defineStore('options', () => {
     const mazeWidth = ref(DEFAULT_MAZE_SIZE);

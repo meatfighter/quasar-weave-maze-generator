@@ -1,22 +1,16 @@
 <script setup lang="ts">
 import panzoom from 'panzoom';
-import { onMounted, ref } from 'vue';
-import { MazeOptions } from 'src/app/maze/MazeOptions';
-import { RenderOptions } from 'src/app/render/RenderOptions';
-import { generateMaze } from 'src/app/maze/maze-generator';
-import { renderMaze } from 'src/app/render/maze-renderer';
-import { Color } from 'src/app/color/Color';
+import { onMounted, ref, watch } from 'vue';
+import { useRenderStore } from 'stores/renderStore';
+import { storeToRefs } from 'pinia';
+import { updateMaze } from 'src/app/controller/maze-controller';
 
 const svgContainer = ref<HTMLDivElement | null>(null);
 const svgImage = ref<HTMLImageElement | null>(null);
+const renderStore = useRenderStore();
+const { url } = storeToRefs(renderStore);
 
-async function updateSvg() {
-  const mazeOptions = new MazeOptions();
-  const renderOptions = new RenderOptions('test');
-  renderOptions.backgroundColor = new Color(255, 255, 255, 1);
-  const maze = generateMaze(mazeOptions);
-  const blob = await renderMaze(maze, renderOptions);
-  const url = URL.createObjectURL(blob);
+watch(url, () => {
   if (svgImage.value) {
     svgImage.value.style.visibility = 'hidden';
     svgImage.value.onload = () => {
@@ -62,9 +56,9 @@ async function updateSvg() {
         svgImage.value.style.visibility = 'visible';
       }
     };
-    svgImage.value.src = url;
+    svgImage.value.src = url.value;
   }
-}
+});
 
 function onMouseDown() {
   if (svgImage.value) {
@@ -79,7 +73,7 @@ function onMouseUp() {
 }
 
 onMounted(() => {
-  void updateSvg();
+  updateMaze();
 });
 </script>
 

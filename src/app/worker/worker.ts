@@ -27,6 +27,7 @@ self.onmessage = <T>(event: MessageEvent<Message<T>>) => {
 const tasks = new Map<string, Task>();
 
 async function onGenerateMaze(task: GenerateMazeTask) {
+    console.log('--1');
     try {
         tasks.set(task.id, task);
         await yieldToEventThread();
@@ -42,12 +43,14 @@ async function onGenerateMaze(task: GenerateMazeTask) {
         }
 
         self.postMessage(new Message(MessageType.MAZE, new MazeResponse(task.id, maze)));
+        console.log('--1a');
     } finally {
         tasks.delete(task.id);
     }
 }
 
 async function onRenderMaze(task: RenderMazeTask) {
+    console.log('--2');
     try {
         tasks.set(task.id, task);
         await yieldToEventThread();

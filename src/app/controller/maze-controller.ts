@@ -1,19 +1,4 @@
 import MazeWorker from 'src/app/worker/worker?worker';
-import {
-    DEFAULT_BACKGROUND_COLOR,
-    DEFAULT_CELL_SIZE,
-    DEFAULT_CROSS_PCT,
-    DEFAULT_IMAGE_SIZE,
-    DEFAULT_LINE_WIDTH_PCT,
-    DEFAULT_LONG_PASSAGES,
-    DEFAULT_LOOP_PCT,
-    DEFAULT_MAZE_SIZE,
-    DEFAULT_PASSAGE_WIDTH_PCT,
-    DEFAULT_SOLUTION,
-    DEFAULT_SOLUTION_COLOR,
-    DEFAULT_SQUARE_CORNERS,
-    DEFAULT_WALL_COLOR
-} from 'stores/optionsStore';
 import { MessageType } from 'src/app/worker/MessageType';
 import { Message } from 'src/app/worker/Message';
 import { GenerateMazeTask } from 'src/app/maze/GenerateMazeTask';
@@ -24,6 +9,23 @@ import { toColor } from 'src/app/color/Color';
 import { RenderResponse } from 'src/app/render/RenderResponse';
 import { RenderMazeTask } from 'src/app/render/RenderMazeTask';
 import { RenderOptions } from 'src/app/render/RenderOptions';
+import { useRenderStore } from 'stores/renderStore';
+import { storeToRefs } from 'pinia';
+import {
+    DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_CELL_SIZE,
+    DEFAULT_CROSS_PCT,
+    DEFAULT_IMAGE_SIZE,
+    DEFAULT_LINE_WIDTH_PCT,
+    DEFAULT_LONG_PASSAGES,
+    DEFAULT_LOOP_PCT,
+    DEFAULT_MAZE_SIZE,
+    DEFAULT_PASSAGE_WIDTH_PCT, DEFAULT_SOLUTION, DEFAULT_SOLUTION_COLOR, DEFAULT_SQUARE_CORNERS,
+    DEFAULT_WALL_COLOR,
+} from 'src/app/controller/defaults';
+
+const renderStore = useRenderStore();
+const { url: renderStoreUrl } = storeToRefs(renderStore);
 
 let taskSequence = 0;
 
@@ -47,11 +49,13 @@ let backgroundColor = toColor(DEFAULT_BACKGROUND_COLOR);
 let runningMazeTaskId: string | null = null;
 let runningRenderTaskId: string | null = null;
 
-let maze = new Maze(new MazeOptions(mazeWidth, mazeHeight, loopFrac, crossFrac, longPassages));
+let maze: Maze | null = null;
+let url: string | null = null;
 
 const worker = new MazeWorker();
-onmessage = <T>(event: MessageEvent<Message<T>>) => {
+worker.onmessage = <T>(event: MessageEvent<Message<T>>) => {
     const message = event.data;
+    console.log('--z');
     switch (message.type) {
         case MessageType.MAZE:
             onMaze(message.data as MazeResponse);
@@ -63,22 +67,44 @@ onmessage = <T>(event: MessageEvent<Message<T>>) => {
 };
 
 function onMaze(response: MazeResponse) {
+    console.log('--b');
     if (response.id !== runningMazeTaskId) {
         return;
     }
+    runningMazeTaskId = null;
     maze = response.maze;
+    updateRender();
 }
 
 function onRender(response: RenderResponse) {
+    console.log('--d');
     if (response.id !== runningRenderTaskId) {
+        URL.revokeObjectURL(response.url);
         return;
     }
+    runningRenderTaskId = null;
+    if (url) {
+        URL.revokeObjectURL(url);
+    }
+    url = response.url;
+    console.log(url);
+    renderStoreUrl.value = url;
 }
 
-function updateMaze() {
+export function updateMaze() {
+    console.log('--a');
+    maze = null;
+    if (url) {
+        URL.revokeObjectURL(url);
+        url = null;
+    }
     if (runningMazeTaskId) {
         worker.postMessage(new Message(MessageType.CANCEL, runningMazeTaskId));
         runningMazeTaskId = null;
+    }
+    if (runningRenderTaskId) {
+        worker.postMessage(new Message(MessageType.CANCEL, runningRenderTaskId));
+        runningRenderTaskId = null;
     }
     runningMazeTaskId = taskSequence.toString();
     ++taskSequence;
@@ -87,7 +113,8 @@ function updateMaze() {
 }
 
 function updateRender() {
-    if (runningMazeTaskId) {
+    console.log('--c');
+    if (!maze || runningMazeTaskId) {
         return;
     }
     if (runningRenderTaskId) {
