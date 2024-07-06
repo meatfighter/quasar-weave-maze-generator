@@ -26,6 +26,9 @@ import { MazeRequest } from 'src/app/worker/MazeRequest';
 import { DeactivatedResponse } from 'src/app/worker/DeactivatedResponse';
 import { nextTick } from 'vue';
 
+const UPDATE_PROCESSING_DELAY_MILLIS = 400; // Doherty Threshold
+let updateProcessingTimeoutId: number | undefined;
+
 const renderStore = useRenderStore();
 const { url, processing } = storeToRefs(renderStore);
 
@@ -62,11 +65,26 @@ worker.onmessage = <T>(event: MessageEvent<Message<T>>) => {
     }
 };
 
-function onDeactivatedResponse(id: number) {
-    activeIds.delete(id);
-    if (activeIds.size === 0) {
+function updateProcessing(delayed = false) {
+    const newValue = activeIds.size !== 0;
+    if (newValue) {
+        if (!processing.value) {
+            if (delayed) {
+                processing.value = true;
+            } else {
+                clearTimeout(updateProcessingTimeoutId);
+                updateProcessingTimeoutId = window.setTimeout(() => updateProcessing(true),
+                        UPDATE_PROCESSING_DELAY_MILLIS);
+            }
+        }
+    } else if (processing.value) {
         processing.value = false;
     }
+}
+
+function onDeactivatedResponse(id: number) {
+    activeIds.delete(id);
+    updateProcessing();
 }
 
 function onMazeResponse(response: MazeResponse) {
@@ -82,7 +100,7 @@ function onMazeResponse(response: MazeResponse) {
 export function updateMaze(renderOnly: boolean) {
     const id = idSequence++;
     activeIds.add(id);
-    processing.value = true;
+    updateProcessing();
     worker.postMessage(new Message(MessageType.MAZE_REQUEST, new MazeRequest(
             id,
             new MazeOptions(mazeWidth, mazeHeight, loopFrac, crossFrac, longPassages),
