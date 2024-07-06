@@ -16,9 +16,13 @@ import { Arc } from './Arc';
 // import { toFileExtensions } from './FileFormat';
 import { Renderer } from 'src/app/render/Renderer';
 import { SvgRenderer } from 'src/app/render/SvgRenderer';
-import { RenderMazeTask } from 'src/app/render/RenderMazeTask';
+import { RenderOptions } from 'src/app/render/RenderOptions';
+import { CancelState } from 'src/app/worker/CancelState';
 
 // const SOLUTION_SUFFIX = '-solution';
+
+const ITERATIONS_PER_YIELD = 256;
+let yieldCounter = ITERATIONS_PER_YIELD;
 
 function renderPaths(r: Renderer, paths: Segment[][], roundedCorners: boolean) {
     r.beginPath();
@@ -358,33 +362,32 @@ function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number)
 //     }
 // }
 
-export async function renderMaze(task: RenderMazeTask): Promise<Blob> {
-    const { maze, options: renderOptions } = task;
+export async function renderMaze(maze: Maze, options: RenderOptions, _cancelState: CancelState): Promise<Blob> {
 
-    const cellMarginFrac = (1 - renderOptions.passageWidthFrac) / 2;
-    const solutionPaths: Segment[][] | undefined = renderOptions.solution
-            ? generateSolutionPaths(maze, renderOptions.cellSize, cellMarginFrac) : undefined;
-    const wallPaths = generateWallPaths(maze, renderOptions.cellSize, cellMarginFrac);
+    const cellMarginFrac = (1 - options.passageWidthFrac) / 2;
+    const solutionPaths: Segment[][] | undefined = options.solution
+            ? generateSolutionPaths(maze, options.cellSize, cellMarginFrac) : undefined;
+    const wallPaths = generateWallPaths(maze, options.cellSize, cellMarginFrac);
 
     const renderer = new SvgRenderer();
-    renderer.setSize(renderOptions.imageWidth, renderOptions.imageHeight);
+    renderer.setSize(options.imageWidth, options.imageHeight);
 
-    const linecap = renderOptions.roundedCorners ? 'round' : 'square';
-    const lineWidth = renderOptions.lineWidthFrac * renderOptions.cellSize;
+    const linecap = options.roundedCorners ? 'round' : 'square';
+    const lineWidth = options.lineWidthFrac * options.cellSize;
 
-    const backgroundColor = renderOptions.backgroundColor;
+    const backgroundColor = options.backgroundColor;
     if (backgroundColor.alpha > 0) {
-        renderer.setFill(backgroundColor).fillRect(0, 0, renderOptions.imageWidth, renderOptions.imageHeight);
+        renderer.setFill(backgroundColor).fillRect(0, 0, options.imageWidth, options.imageHeight);
     }
 
-    if (solutionPaths && renderOptions.solutionColor.alpha > 0) {
-        renderer.setStroke(linecap, lineWidth, renderOptions.solutionColor);
-        renderPaths(renderer, solutionPaths, renderOptions.roundedCorners);
+    if (solutionPaths && options.solutionColor.alpha > 0) {
+        renderer.setStroke(linecap, lineWidth, options.solutionColor);
+        renderPaths(renderer, solutionPaths, options.roundedCorners);
     }
 
-    if (renderOptions.wallColor.alpha > 0) {
-        renderer.setStroke(linecap, lineWidth, renderOptions.wallColor);
-        renderPaths(renderer, wallPaths, renderOptions.roundedCorners);
+    if (options.wallColor.alpha > 0) {
+        renderer.setStroke(linecap, lineWidth, options.wallColor);
+        renderPaths(renderer, wallPaths, options.roundedCorners);
     }
 
     return renderer.toBlob();

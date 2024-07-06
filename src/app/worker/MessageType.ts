@@ -1,8 +1,5 @@
 export enum MessageType {
-    CREATE_MASK,
-    GENERATE_MAZE,
-    MAZE,
+    GENERATE_AND_RENDER_MAZE,
     RENDER_MAZE,
-    RENDER,
-    CANCEL,
+    RENDER_RESULT,
 }

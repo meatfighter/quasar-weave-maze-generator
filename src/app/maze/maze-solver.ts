@@ -2,7 +2,11 @@ import { Maze } from './Maze';
 import { Cell } from './Cell';
 import { Node } from './Node';
 import { permutations, shuffleArray } from 'src/utils/arrays';
-import { isCancelled, Task } from 'src/app/worker/Task';
+import { CancelState } from 'src/app/worker/CancelState';
+import { yieldToEventThread } from 'src/utils/threads';
+
+const ITERATIONS_PER_YIELD = 256;
+let yieldCounter = ITERATIONS_PER_YIELD;
 
 function findBorderNodes(maze: Maze): Set<Node> {
     const cells = maze.cells;
@@ -168,13 +172,17 @@ function wireSolution(solution: Node[], maze: Maze) {
     }
 }
 
-export async function solveMaze(maze: Maze, task: Task) {
+export async function solveMaze(maze: Maze, cancelState: CancelState) {
     const borderNodes = findBorderNodes(maze);
     const bestSolution: Node[] = [];
     const stack: Node[] = [];
     for (const node of borderNodes) {
-        if (await isCancelled(task)) {
-            return;
+        if (--yieldCounter === 0) {
+            yieldCounter = ITERATIONS_PER_YIELD;
+            await yieldToEventThread();
+            if (cancelState.cancelled) {
+                return;
+            }
         }
         flood(node, maze, borderNodes, bestSolution, stack);
     }

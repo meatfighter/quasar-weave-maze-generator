@@ -3,8 +3,12 @@ import { Cell } from './Cell';
 import { Node } from './Node';
 import { permutations, shuffleArray } from 'src/utils/arrays';
 import { solveMaze } from './maze-solver';
-import { GenerateMazeTask } from 'src/app/maze/GenerateMazeTask';
-import { isCancelled, Task } from 'src/app/worker/Task';
+import { CancelState } from 'src/app/worker/CancelState';
+import { MazeOptions } from 'src/app/maze/MazeOptions';
+import { yieldToEventThread } from 'src/utils/threads';
+
+const ITERATIONS_PER_YIELD = 256;
+let yieldCounter = ITERATIONS_PER_YIELD;
 
 function assignRegion(region: number, seed: Node, stack: Node[]): Node[] {
 
@@ -457,7 +461,8 @@ function addCross(maze: Maze, cell: Cell, stack: Node[], northSouthHopsEastWest:
     return true;
 }
 
-async function addLoopsAndCrosses(maze: Maze, loopFraction: number, crossFraction: number, stack: Node[], task: Task) {
+async function addLoopsAndCrosses(maze: Maze, loopFraction: number, crossFraction: number, stack: Node[],
+                                  cancelState: CancelState) {
 
     const cells: Cell[] = [];
     for (let i = maze.height - 2; i >= 1; --i) {
@@ -471,8 +476,12 @@ async function addLoopsAndCrosses(maze: Maze, loopFraction: number, crossFractio
     let loops = 0;
     const maxLoops = Math.round(cells.length * loopFraction);
     while (loops < maxLoops && cells.length > 0) {
-        if (await isCancelled(task)) {
-            return;
+        if (--yieldCounter === 0) {
+            yieldCounter = ITERATIONS_PER_YIELD;
+            await yieldToEventThread();
+            if (cancelState.cancelled) {
+                return;
+            }
         }
         const index = Math.floor(cells.length * Math.random());
         const cell = cells[index];
@@ -517,8 +526,12 @@ async function addLoopsAndCrosses(maze: Maze, loopFraction: number, crossFractio
     let crosses = 0;
     const maxCrosses = Math.round(cells.length * crossFraction);
     while (crosses < maxCrosses && cells.length > 0) {
-        if (await isCancelled(task)) {
-            return;
+        if (--yieldCounter === 0) {
+            yieldCounter = ITERATIONS_PER_YIELD;
+            await yieldToEventThread();
+            if (cancelState.cancelled) {
+                return;
+            }
         }
         const index = Math.floor(cells.length * Math.random());
         const cell = cells[index];
@@ -551,7 +564,8 @@ function moveToEnd(nodes: Node[], node: Node) {
     nodes.push(node);
 }
 
-async function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], longCorridors: boolean, task: Task) {
+async function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], longCorridors: boolean,
+                                  cancelState: CancelState) {
 
     const maxX = maze.width - 1;
     const maxY = maze.height - 1;
@@ -570,8 +584,12 @@ async function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], 
     }
 
     outer: while (nodes.length > 0) {
-        if (await isCancelled(task)) {
-            return;
+        if (--yieldCounter === 0) {
+            yieldCounter = ITERATIONS_PER_YIELD;
+            await yieldToEventThread();
+            if (cancelState.cancelled) {
+                return;
+            }
         }
 
         const index = longCorridors ? nodes.length - 1 : Math.floor(nodes.length * Math.random());
@@ -663,18 +681,26 @@ async function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], 
     }
 }
 
-export async function generateMaze(task: GenerateMazeTask): Promise<Maze> {
-    const maze = new Maze(task.options);
+export async function generateMaze(options: MazeOptions, cancelState: CancelState): Promise<Maze | null> {
+    const maze = new Maze(options);
     const stack: Node[] = [];
-    await addLoopsAndCrosses(maze, task.options.loopFrac, task.options.crossFrac, stack, task);
-    if (await isCancelled(task)) {
-        return maze;
+
+    await addLoopsAndCrosses(maze, options.loopFrac, options.crossFrac, stack, cancelState);
+    if (cancelState.cancelled) {
+        return null;
     }
+
     const regions = assignRegions(maze, stack);
-    await createSpanningTree(maze, stack, regions, task.options.longPassages, task);
-    if (await isCancelled(task)) {
-        return maze;
+
+    await createSpanningTree(maze, stack, regions, options.longPassages, cancelState);
+    if (cancelState.cancelled) {
+        return null;
     }
-    await solveMaze(maze, task);
+
+    await solveMaze(maze, cancelState);
+    if (cancelState.cancelled) {
+        return null;
+    }
+
     return maze;
 }
