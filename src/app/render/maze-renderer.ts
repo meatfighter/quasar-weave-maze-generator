@@ -364,7 +364,7 @@ function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number)
 
 export async function renderMaze(maze: Maze, options: RenderOptions, cancelState: CancelState): Promise<Blob | null> {
 
-    console.log(++yieldCounter + ' ' + cancelState); // TODO REMOVE
+    console.log(++yieldCounter + ' ' + cancelState); // TODO REMOVE, ALSO DO I NEED CANCEL STATE HERE?!!!
 
     const cellMarginFrac = (1 - options.passageWidthFrac) / 2;
     const solutionPaths: Segment[][] | undefined = options.solution

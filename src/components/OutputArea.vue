@@ -55,9 +55,9 @@ watch(url, () => {
     }
 
     const pz = panzoom(svgImage.value);
-    if (lastWidth !== width || lastHeight !== height) {
-      lastWidth = width;
-      lastHeight = height;
+    if (lastWidth !== svgImage.value.width || lastHeight !== svgImage.value.height) {
+      lastWidth = svgImage.value.width;
+      lastHeight = svgImage.value.height;
       if (width !== svgImage.value.width) {
         pz.zoomTo(0, 0, width / svgImage.value.width);
       }
