@@ -362,7 +362,9 @@ function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number)
 //     }
 // }
 
-export async function renderMaze(maze: Maze, options: RenderOptions, _cancelState: CancelState): Promise<Blob> {
+export async function renderMaze(maze: Maze, options: RenderOptions, cancelState: CancelState): Promise<Blob | null> {
+
+    console.log(++yieldCounter + ' ' + cancelState); // TODO REMOVE
 
     const cellMarginFrac = (1 - options.passageWidthFrac) / 2;
     const solutionPaths: Segment[][] | undefined = options.solution

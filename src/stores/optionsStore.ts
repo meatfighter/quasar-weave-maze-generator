@@ -2,9 +2,8 @@ import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { clamp } from 'src/utils/numbers';
 import {
-    onBackgroundColor,
-    onCellSize,
-    onCrossPct, onImageHeight, onImageWidth, onLineWidthPct,
+    onBackgroundColor, onCellAndImageSize,
+    onCrossPct, onLineWidthPct,
     onLongPassages,
     onLoopPct,
     onMazeHeight,
@@ -91,11 +90,11 @@ export const useOptionsStore = defineStore('options', () => {
     });
 
     function updateCellAndImageSize(cSize: number, imgWidth: number, imgHeight: number) {
+
         let changes: boolean
         do {
             changes = false;
             if (cSize < MIN_CELL_SIZE) {
-
                 cSize = MIN_CELL_SIZE;
                 imgWidth = cSize * mazeWidth.value;
                 imgHeight = cSize * mazeHeight.value;
@@ -125,16 +124,15 @@ export const useOptionsStore = defineStore('options', () => {
 
         if (cSize !== cellSize.value) {
             cellSize.value = cSize;
-            onCellSize(cellSize.value);
         }
         if (imgWidth !== imageWidth.value) {
             imageWidth.value = imgWidth;
-            onImageWidth(imageWidth.value);
         }
         if (imgHeight !== imageHeight.value) {
             imageHeight.value = imgHeight;
-            onImageHeight(imageHeight.value);
         }
+
+        onCellAndImageSize(cSize, imgWidth, imgHeight);
     }
 
     const cellSize = ref(DEFAULT_CELL_SIZE);
