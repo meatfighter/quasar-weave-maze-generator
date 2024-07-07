@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { updateMaze } from 'src/app/controller/maze-controller';
+import { useRenderStore } from 'stores/renderStore';
+
+const renderStore = useRenderStore();
+const { centerImage } = renderStore;
 
 function onGenerate() {
   updateMaze(false);
@@ -16,7 +20,7 @@ function onGenerate() {
       <q-img src="white-logo.svg" spinner-color="white" style="width: 45px;"/>
       <q-toolbar-title>Weave Maze Generator</q-toolbar-title>
       <div class="q-gutter-sm">
-        <q-btn icon="center_focus_strong" rounded color="primary" no-caps label="Center"/>
+        <q-btn icon="center_focus_strong" rounded color="primary" no-caps label="Center" @click="centerImage"/>
         <q-btn icon="interests" rounded color="primary" no-caps label="Mask"/>
         <q-btn icon="save" rounded color="primary" no-caps label="Save"/>
         <q-btn icon="print" rounded color="primary" no-caps label="Print"/>
