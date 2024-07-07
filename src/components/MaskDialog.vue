@@ -1,10 +1,28 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { MAX_MAZE_SIZE } from 'src/app/controller/defaults';
 
+const IMAGE_FILE_EXTENSIONS = new Set<string>(
+    ['apng', 'bmp', 'gif', 'ico', 'jpg', 'jpeg', 'svg', 'svgz', 'png', 'webp']);
+
 const dialogVisible = defineModel<boolean>();
-const imagePath = ref('');
+const imageUrl = ref('');
+
+watch(imageUrl, () => {
+  let url = imageUrl.value;
+  if (!url) {
+    return;
+  }
+  url = url.trim();
+  if (!url) {
+    return;
+  }
+  const index = url.lastIndexOf('.');
+  if (index < 0 || index > url.length - 4 || !IMAGE_FILE_EXTENSIONS.has(url.substring(index + 1).toLowerCase())) {
+    return;
+  }
+});
 
 function closeDialog() {
   dialogVisible.value = false;
@@ -42,7 +60,7 @@ function closeDialog() {
         <div class="separator-line"></div><div class="separator-text">or</div><div class="separator-line"></div>
       </div>
       <q-card-section>
-        <q-input class="col" v-model="imagePath" label="Paste image URL or filepath" filled dense/>
+        <q-input class="col" v-model="imageUrl" label="Paste image URL" filled dense/>
       </q-card-section>
     </q-card>
   </q-dialog>
