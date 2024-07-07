@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { clamp } from 'src/utils/numbers';
 import {
     onBackgroundColor, onCellAndImageSize,
     onCrossPct, onLineWidthPct,
     onLongPassages,
-    onLoopPct,
+    onLoopPct, onMask,
     onMazeHeight,
     onMazeWidth, onPassageWidthPct, onSolution, onSolutionColor, onSquareCorners, onWallColor
 } from 'src/app/controller/maze-controller';
@@ -34,6 +34,8 @@ import {
     MIN_MAZE_SIZE,
     MIN_PASSAGE_WIDTH_PCT
 } from 'src/app/controller/defaults';
+import { Rgbas } from 'src/app/color/Rgbas';
+import { toBlobUrl } from 'src/utils/blob';
 
 export const useOptionsStore = defineStore('options', () => {
     const mazeWidth = ref(DEFAULT_MAZE_SIZE);
@@ -216,6 +218,20 @@ export const useOptionsStore = defineStore('options', () => {
         }
     });
 
+    const maskRgbas = ref<Rgbas | null>(null);
+    watch(maskRgbas, (value, oldValue) => {
+        if (value !== oldValue) {
+            if (value) {
+                mazeWidth.value = value.width;
+                mazeHeight.value = value.height;
+            } else {
+                mazeWidth.value = DEFAULT_MAZE_SIZE;
+                mazeHeight.value = DEFAULT_MAZE_SIZE;
+            }
+            void nextTick(() => onMask(value ? toBlobUrl(value.data) : undefined));
+        }
+    });
+
     const resettable = computed(() =>
         mazeWidth.value !== DEFAULT_MAZE_SIZE
             || mazeHeight.value !== DEFAULT_MAZE_SIZE
@@ -253,5 +269,6 @@ export const useOptionsStore = defineStore('options', () => {
     }
 
     return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,
-            lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, solution, resettable, reset };
+            lineWidthPct, passageWidthPct, wallColor, backgroundColor, solutionColor, solution, resettable, maskRgbas,
+            reset };
 });

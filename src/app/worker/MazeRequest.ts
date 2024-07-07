@@ -6,8 +6,6 @@ export class MazeRequest {
                 public readonly mazeOptions: MazeOptions,
                 public readonly renderOptions: RenderOptions,
                 public readonly renderOnly: boolean,
-                public readonly maskWidth = 0,
-                public readonly maskHeight = 0,
                 public readonly maskBlobUrl?: string) {
     }
 }

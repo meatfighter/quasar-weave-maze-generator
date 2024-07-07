@@ -1,4 +1,5 @@
 import { Rgbas } from 'src/app/color/Rgbas';
+import { MAX_IMAGE_SIZE } from 'src/app/controller/defaults';
 
 const DOWNLOAD_RETRIES = 3;
 const DOWNLOAD_RETRY_DELAY_MILLIS = 500;
@@ -26,12 +27,20 @@ async function loadRgbas(src: string, displayName?: string): Promise<Rgbas> {
 
 async function makeRgbas(blobUrl: string, displayName?: string): Promise<Rgbas> {
     try {
-        return await loadRgbas(blobUrl, displayName);
-    } catch (e: unknown) {
-        throw e;
+        return validateRgbas(await loadRgbas(blobUrl, displayName));
     } finally {
         URL.revokeObjectURL(blobUrl);
     }
+}
+
+function validateRgbas(rgbas: Rgbas): Rgbas {
+    if (rgbas.width === 0 || rgbas.height === 0) {
+        throw new Error('Image too small.');
+    }
+    if (rgbas.width > MAX_IMAGE_SIZE || rgbas.height > MAX_IMAGE_SIZE) {
+        throw new Error('Image too big.');
+    }
+    return rgbas;
 }
 
 export async function makeRgbasFromFile(file: File): Promise<Rgbas> {

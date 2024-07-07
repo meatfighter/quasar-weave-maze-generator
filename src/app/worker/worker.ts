@@ -64,8 +64,8 @@ async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequ
         if (request.maskBlobUrl !== maskBlobUrl) {
             clearMask();
             try {
-                mask = loadMask(new Rgbas(await toUint8ClampedArray(request.maskBlobUrl), request.maskWidth,
-                        request.maskHeight));
+                mask = loadMask(new Rgbas(await toUint8ClampedArray(request.maskBlobUrl), request.mazeOptions.width,
+                        request.mazeOptions.height));
                 maskBlobUrl = request.maskBlobUrl;
             } catch {
             }

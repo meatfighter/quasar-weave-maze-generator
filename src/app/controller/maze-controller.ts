@@ -25,8 +25,6 @@ import {
 import { MazeRequest } from 'src/app/worker/MazeRequest';
 import { AckResponse } from 'src/app/worker/AckResponse';
 import { nextTick } from 'vue';
-import { Rgbas } from 'src/app/color/Rgbas';
-import { toBlobUrl } from 'src/utils/blob';
 
 const UPDATE_PROCESSING_DELAY_MILLIS = 400; // Doherty Threshold
 let updateProcessingTimeoutId: number | undefined;
@@ -51,8 +49,6 @@ let wallColor = toColor(DEFAULT_WALL_COLOR);
 let solutionColor = toColor(DEFAULT_SOLUTION_COLOR);
 let backgroundColor = toColor(DEFAULT_BACKGROUND_COLOR);
 
-let maskWidth = 0;
-let maskHeight = 0;
 let maskBlobUrl: string | undefined = undefined;
 
 let idSequence = 0;
@@ -103,7 +99,7 @@ function onMazeResponse(response: MazeResponse) {
     });
 }
 
-function updateMaze(renderOnly: boolean) {
+export function updateMaze(renderOnly: boolean) {
     const id = idSequence++;
     activeIds.add(id);
     updateProcessing();
@@ -112,7 +108,8 @@ function updateMaze(renderOnly: boolean) {
             new MazeOptions(mazeWidth, mazeHeight, loopFrac, crossFrac, longPassages),
             new RenderOptions(solution, roundedCorners, cellSize, imageWidth, imageHeight, lineWidthFrac,
                     passageWidthFrac, wallColor, solutionColor, backgroundColor),
-            renderOnly)));
+            renderOnly,
+            maskBlobUrl)));
 }
 
 export function onMazeWidth(_mazeWidth: number) {
@@ -182,15 +179,7 @@ export function onSolutionColor(_solutionColor: string) {
     updateMaze(true);
 }
 
-export function onMask(rgbas: Rgbas | null) {
-    if (rgbas) {
-        maskWidth = rgbas.width;
-        maskHeight = rgbas.height;
-        maskBlobUrl = toBlobUrl(rgbas.data);
-    } else {
-        maskWidth = 0;
-        maskHeight = 0;
-        maskBlobUrl = undefined;
-    }
+export function onMask(_maskBlobUrl: string | undefined) {
+    maskBlobUrl = _maskBlobUrl;
     updateMaze(false);
 }
