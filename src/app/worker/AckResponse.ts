@@ -1,4 +1,4 @@
-export class DeactivatedResponse {
+export class AckResponse {
     constructor(public readonly id: number) {
     }
 }

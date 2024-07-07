@@ -23,8 +23,10 @@ import {
     DEFAULT_WALL_COLOR
 } from 'src/app/controller/defaults';
 import { MazeRequest } from 'src/app/worker/MazeRequest';
-import { DeactivatedResponse } from 'src/app/worker/DeactivatedResponse';
+import { AckResponse } from 'src/app/worker/AckResponse';
 import { nextTick } from 'vue';
+import { Rgbas } from 'src/app/color/Rgbas';
+import { toBlobUrl } from 'src/utils/blob';
 
 const UPDATE_PROCESSING_DELAY_MILLIS = 400; // Doherty Threshold
 let updateProcessingTimeoutId: number | undefined;
@@ -49,6 +51,10 @@ let wallColor = toColor(DEFAULT_WALL_COLOR);
 let solutionColor = toColor(DEFAULT_SOLUTION_COLOR);
 let backgroundColor = toColor(DEFAULT_BACKGROUND_COLOR);
 
+let maskWidth = 0;
+let maskHeight = 0;
+let maskBlobUrl: string | undefined = undefined;
+
 let idSequence = 0;
 const activeIds = new Set<number>();
 
@@ -59,8 +65,8 @@ worker.onmessage = <T>(event: MessageEvent<Message<T>>) => {
         case MessageType.MAZE_RESPONSE:
             onMazeResponse(message.data as MazeResponse);
             break;
-        case MessageType.DEACTIVATED_RESPONSE:
-            onDeactivatedResponse((message.data as DeactivatedResponse).id);
+        case MessageType.ACK_RESPONSE:
+            onAckResponse((message.data as AckResponse).id);
             break;
     }
 };
@@ -82,13 +88,13 @@ function updateProcessing(delayed = false) {
     }
 }
 
-function onDeactivatedResponse(id: number) {
+function onAckResponse(id: number) {
     activeIds.delete(id);
     updateProcessing();
 }
 
 function onMazeResponse(response: MazeResponse) {
-    onDeactivatedResponse(response.id);
+    onAckResponse(response.id);
     void nextTick(() => {
         if (url.value) {
             URL.revokeObjectURL(url.value);
@@ -97,7 +103,7 @@ function onMazeResponse(response: MazeResponse) {
     });
 }
 
-export function updateMaze(renderOnly: boolean) {
+function updateMaze(renderOnly: boolean) {
     const id = idSequence++;
     activeIds.add(id);
     updateProcessing();
@@ -174,4 +180,17 @@ export function onBackgroundColor(_backgroundColor: string) {
 export function onSolutionColor(_solutionColor: string) {
     solutionColor = toColor(_solutionColor);
     updateMaze(true);
+}
+
+export function onMask(rgbas: Rgbas | null) {
+    if (rgbas) {
+        maskWidth = rgbas.width;
+        maskHeight = rgbas.height;
+        maskBlobUrl = toBlobUrl(rgbas.data);
+    } else {
+        maskWidth = 0;
+        maskHeight = 0;
+        maskBlobUrl = undefined;
+    }
+    updateMaze(false);
 }

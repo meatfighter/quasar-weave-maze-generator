@@ -681,8 +681,10 @@ async function createSpanningTree(maze: Maze, nodes: Node[], regions: Node[][], 
     }
 }
 
-export async function generateMaze(options: MazeOptions, cancelState: CancelState): Promise<Maze | null> {
-    const maze = new Maze(options);
+export async function generateMaze(cancelState: CancelState, options: MazeOptions, mask?: boolean[][]):
+        Promise<Maze | null> {
+
+    const maze = new Maze(options, mask);
     const stack: Node[] = [];
 
     await addLoopsAndCrosses(maze, options.loopFrac, options.crossFrac, stack, cancelState);

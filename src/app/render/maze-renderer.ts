@@ -362,7 +362,7 @@ function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number)
 //     }
 // }
 
-export async function renderMaze(maze: Maze, options: RenderOptions, cancelState: CancelState): Promise<Blob | null> {
+export async function renderMaze(cancelState: CancelState, maze: Maze, options: RenderOptions): Promise<Blob | null> {
 
     console.log(++yieldCounter + ' ' + cancelState); // TODO REMOVE, ALSO DO I NEED CANCEL STATE HERE?!!!
 

@@ -22,6 +22,7 @@ watch(imageUrl, () => {
   if (index < 0 || index > url.length - 4 || !IMAGE_FILE_EXTENSIONS.has(url.substring(index + 1).toLowerCase())) {
     return;
   }
+  console.log(url);
 });
 
 function closeDialog() {

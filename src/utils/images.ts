@@ -1,4 +1,4 @@
-import Rgbas from 'src/app/color/Rgbas';
+import { Rgbas } from 'src/app/color/Rgbas';
 
 const DOWNLOAD_RETRIES = 3;
 const DOWNLOAD_RETRY_DELAY_MILLIS = 500;

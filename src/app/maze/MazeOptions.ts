@@ -3,8 +3,6 @@ export class MazeOptions {
                 public readonly height: number,
                 public readonly loopFrac: number,
                 public readonly crossFrac: number,
-                public readonly longPassages: boolean,
-
-                public readonly mask?: boolean[][]) {
+                public readonly longPassages: boolean) {
     }
 }

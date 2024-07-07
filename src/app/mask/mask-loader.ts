@@ -1,5 +1,5 @@
 import { Cell } from './Cell';
-import { loadRgbas } from 'src/utils/images';
+import { Rgbas } from 'src/app/color/Rgbas';
 
 function mergeRegions(cells: Cell[][], width: number, height: number, cell: Cell, c: Cell) {
     let sourceRegion: number;
@@ -179,8 +179,8 @@ function createMask(cells: Cell[][], width: number, height: number): boolean[][]
     return mask;
 }
 
-export async function loadMask(filename: string): Promise<boolean[][]> {
-    const { data, width, height } = await loadRgbas(filename);
+export function loadMask(rgbas: Rgbas): boolean[][] {
+    const { data, width, height } = rgbas;
     const cells = createCells(data, width, height);
     findRegions(cells, width, height);
     joinRegions(cells, width, height);

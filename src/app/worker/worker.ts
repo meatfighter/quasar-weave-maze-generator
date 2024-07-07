@@ -7,12 +7,17 @@ import { MazeRequest } from 'src/app/worker/MazeRequest';
 import { Maze } from 'src/app/maze/Maze';
 import { RenderOptions } from 'src/app/render/RenderOptions';
 import { MazeResponse } from 'src/app/worker/MazeResponse';
-import { DeactivatedResponse } from 'src/app/worker/DeactivatedResponse';
+import { AckResponse } from 'src/app/worker/AckResponse';
+import { loadMask } from 'src/app/mask/mask-loader';
+import { Rgbas } from 'src/app/color/Rgbas';
+import { toUint8ClampedArray } from 'src/utils/blob';
 
 let currentCancelState: CancelState | null = null;
 let generatingMaze = false;
 let maze: Maze | null = null;
 let currentRenderOptions: RenderOptions | null = null;
+let mask: boolean[][] | undefined = undefined;
+let maskBlobUrl: string | null = null;
 
 self.onmessage = <T>(event: MessageEvent<Message<T>>) => {
     const message = event.data;
@@ -26,7 +31,7 @@ self.onmessage = <T>(event: MessageEvent<Message<T>>) => {
 function onMazeRequest(request: MazeRequest) {
     if (request.renderOnly && generatingMaze) {
         currentRenderOptions = request.renderOptions;
-        self.postMessage(new Message(MessageType.DEACTIVATED_RESPONSE, new DeactivatedResponse(request.id)));
+        self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(request.id)));
         return;
     }
     currentRenderOptions = null;
@@ -37,19 +42,41 @@ function onMazeRequest(request: MazeRequest) {
     currentCancelState = new CancelState();
 
     if (request.renderOnly && maze) {
-        void drawMaze(request.id, maze, request.renderOptions, currentCancelState);
+        void drawMaze(currentCancelState, request.id, maze, request.renderOptions);
         return;
     }
 
     generatingMaze = true;
     maze = null;
-    void generateAndRenderMaze(request, currentCancelState);
+    void generateAndRenderMaze(currentCancelState, request);
 }
 
-async function generateAndRenderMaze(request: MazeRequest, cancelState: CancelState) {
-    const _maze = await generateMaze(request.mazeOptions, cancelState);
+function clearMask() {
+    if (maskBlobUrl) {
+        URL.revokeObjectURL(maskBlobUrl);
+        maskBlobUrl = null;
+    }
+    mask = undefined;
+}
+
+async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequest) {
+    if (request.maskBlobUrl) {
+        if (request.maskBlobUrl !== maskBlobUrl) {
+            clearMask();
+            try {
+                mask = loadMask(new Rgbas(await toUint8ClampedArray(request.maskBlobUrl), request.maskWidth,
+                        request.maskHeight));
+                maskBlobUrl = request.maskBlobUrl;
+            } catch {
+            }
+        }
+    } else {
+        clearMask();
+    }
+
+    const _maze = await generateMaze(cancelState, request.mazeOptions, mask);
     if (!_maze || cancelState.cancelled) {
-        self.postMessage(new Message(MessageType.DEACTIVATED_RESPONSE, new DeactivatedResponse(request.id)));
+        self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(request.id)));
         return;
     }
     maze = _maze;
@@ -57,13 +84,13 @@ async function generateAndRenderMaze(request: MazeRequest, cancelState: CancelSt
 
     const renderingOptions = currentRenderOptions || request.renderOptions;
     currentRenderOptions = null;
-    await drawMaze(request.id, _maze, renderingOptions, cancelState);
+    await drawMaze(cancelState, request.id, _maze, renderingOptions);
 }
 
-async function drawMaze(id: number, maze: Maze, renderOptions: RenderOptions, cancelState: CancelState) {
-    const blob = await renderMaze(maze, renderOptions, cancelState);
+async function drawMaze(cancelState: CancelState, id: number, maze: Maze, renderOptions: RenderOptions) {
+    const blob = await renderMaze(cancelState, maze, renderOptions);
     if (!blob || cancelState.cancelled) {
-        self.postMessage(new Message(MessageType.DEACTIVATED_RESPONSE, new DeactivatedResponse(id)));
+        self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(id)));
         return;
     }
     currentCancelState = null;
