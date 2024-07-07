@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { updateMaze } from 'src/app/controller/maze-controller';
 import { useRenderStore } from 'stores/renderStore';
+import MaskDialog from 'components/MaskDialog.vue';
+import { ref } from 'vue';
 
 const renderStore = useRenderStore();
 const { centerImage } = renderStore;
 
+const maskDialogVisible = ref(false);
+
 function onGenerate() {
   updateMaze(false);
+}
+
+function showMaskDialog() {
+  maskDialogVisible.value = true;
 }
 </script>
 
@@ -21,12 +29,13 @@ function onGenerate() {
       <q-toolbar-title>Weave Maze Generator</q-toolbar-title>
       <div class="q-gutter-sm">
         <q-btn icon="center_focus_strong" rounded color="primary" no-caps label="Center" @click="centerImage"/>
-        <q-btn icon="interests" rounded color="primary" no-caps label="Mask"/>
+        <q-btn icon="interests" rounded color="primary" no-caps label="Mask" @click="showMaskDialog"/>
         <q-btn icon="save" rounded color="primary" no-caps label="Save"/>
         <q-btn icon="print" rounded color="primary" no-caps label="Print"/>
       </div>
     </q-toolbar>
   </q-header>
+  <MaskDialog v-model="maskDialogVisible"/>
 </template>
 
 <style scoped>
