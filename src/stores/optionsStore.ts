@@ -47,6 +47,9 @@ export const useOptionsStore = defineStore('options', () => {
         if (newValue !== oldValue) {
             updateCellAndImageSize(cellSize.value, cellSize.value * newValue, cellSize.value * mazeHeight.value);
             onMazeWidth(newValue);
+            if (maskRgbas.value && maskRgbas.value.width !== newValue) {
+                maskRgbas.value = null;
+            }
         }
     });
 
@@ -59,6 +62,9 @@ export const useOptionsStore = defineStore('options', () => {
         if (newValue !== oldValue) {
             updateCellAndImageSize(cellSize.value, cellSize.value * mazeWidth.value, cellSize.value * newValue);
             onMazeHeight(newValue);
+            if (maskRgbas.value && maskRgbas.value.height !== newValue) {
+                maskRgbas.value = null;
+            }
         }
     });
 
@@ -248,6 +254,7 @@ export const useOptionsStore = defineStore('options', () => {
             || backgroundColor.value !== DEFAULT_BACKGROUND_COLOR
             || solutionColor.value !== DEFAULT_SOLUTION_COLOR
             || solution.value !== DEFAULT_SOLUTION
+            || maskRgbas.value
     );
 
     function reset() {
@@ -266,6 +273,7 @@ export const useOptionsStore = defineStore('options', () => {
         backgroundColor.value = DEFAULT_BACKGROUND_COLOR;
         solutionColor.value = DEFAULT_SOLUTION_COLOR;
         solution.value = DEFAULT_SOLUTION;
+        maskRgbas.value = null;
     }
 
     return { mazeWidth, mazeHeight, loopPct, crossPct, longPassages, cellSize, imageWidth, imageHeight, squareCorners,

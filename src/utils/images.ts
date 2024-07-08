@@ -1,5 +1,5 @@
 import { Rgbas } from 'src/app/color/Rgbas';
-import { MAX_IMAGE_SIZE } from 'src/app/controller/defaults';
+import { MAX_MAZE_SIZE } from 'src/app/controller/defaults';
 
 const DOWNLOAD_RETRIES = 3;
 const DOWNLOAD_RETRY_DELAY_MILLIS = 500;
@@ -34,11 +34,12 @@ async function makeRgbas(blobUrl: string, displayName?: string): Promise<Rgbas> 
 }
 
 function validateRgbas(rgbas: Rgbas): Rgbas {
+    console.log(`validate: ${rgbas.width} ${rgbas.height}`);
     if (rgbas.width === 0 || rgbas.height === 0) {
-        throw new Error('Image too small.');
+        throw new Error('The image must be at least 1\u00D71 pixels.');
     }
-    if (rgbas.width > MAX_IMAGE_SIZE || rgbas.height > MAX_IMAGE_SIZE) {
-        throw new Error('Image too big.');
+    if (rgbas.width > MAX_MAZE_SIZE || rgbas.height > MAX_MAZE_SIZE) {
+        throw new Error(`The image cannot exceed ${MAX_MAZE_SIZE}\u00D7${MAX_MAZE_SIZE} pixels.`);
     }
     return rgbas;
 }

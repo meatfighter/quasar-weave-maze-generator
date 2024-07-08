@@ -23,6 +23,15 @@ function onDrop(event: DragEvent) {
   if (!files || files.length === 0) {
     return;
   }
+  if (files.length !== 1) {
+    $q.notify({
+      message: 'Single files only.',
+      type: 'negative',
+      position: 'bottom',
+      closeBtn: true,
+    })
+    return;
+  }
 
   makeRgbasFromFile(files[0])
     .then(rgbas => maskRgbas.value = rgbas)

@@ -3,9 +3,14 @@ import { updateMaze } from 'src/app/controller/maze-controller';
 import { useRenderStore } from 'stores/renderStore';
 import MaskDialog from 'components/MaskDialog.vue';
 import { ref } from 'vue';
+import { useOptionsStore } from 'stores/optionsStore';
+import { storeToRefs } from 'pinia';
 
 const renderStore = useRenderStore();
 const { centerImage } = renderStore;
+
+const optionsStore = useOptionsStore();
+const { maskRgbas } = storeToRefs(optionsStore);
 
 const maskDialogVisible = ref(false);
 
@@ -29,7 +34,9 @@ function showMaskDialog() {
       <q-toolbar-title>Weave Maze Generator</q-toolbar-title>
       <div class="q-gutter-sm">
         <q-btn icon="center_focus_strong" rounded color="primary" no-caps label="Center" @click="centerImage"/>
-        <q-btn icon="interests" rounded color="primary" no-caps label="Mask" @click="showMaskDialog"/>
+        <q-btn icon="interests" rounded color="primary" no-caps label="Mask" @click="showMaskDialog">
+          <q-badge v-if="maskRgbas" floating color="red" rounded></q-badge>
+        </q-btn>
         <q-btn icon="save" rounded color="primary" no-caps label="Save"/>
         <q-btn icon="print" rounded color="primary" no-caps label="Print"/>
       </div>
