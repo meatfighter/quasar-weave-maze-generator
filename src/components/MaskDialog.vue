@@ -111,7 +111,7 @@ function closeDialog() {
             <span class="q-dialog-title text-weight-bold text-h6">Mask</span>
           </div>
           <div class="col-2 text-right">
-            <q-btn icon="close" no-caps @click="closeDialog"/>
+            <q-btn icon="close" flat round dense @click="closeDialog"></q-btn>
           </div>
         </div>
       </q-card-section>

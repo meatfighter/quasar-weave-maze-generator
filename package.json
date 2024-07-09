@@ -13,12 +13,12 @@
     "build": "quasar build"
   },
   "dependencies": {
-    "@quasar/extras": "^1.16.4",
+    "@quasar/extras": "^1.16.12",
     "file-saver": "^2.0.5",
     "jspdf": "^2.5.1",
     "panzoom": "^9.4.3",
     "pinia": "^2.1.7",
-    "quasar": "^2.8.0",
+    "quasar": "^2.16.5",
     "vue": "^3.4.18",
     "vue-router": "^4.0.12"
   },

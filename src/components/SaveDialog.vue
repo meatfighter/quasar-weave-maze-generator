@@ -4,11 +4,28 @@ import { ref } from 'vue';
 
 const dialogVisible = defineModel<boolean>();
 
-const selectedFileFormats = ref([ 'png', 'svg', 'pdf']);
-const fileFormats = ref([
+const selectedFormats = ref([ 'png', 'svg', 'pdf']);
+const outputFormats = ref([
   { label: 'PNG', value: 'png', },
   { label: 'SVG', value: 'svg', },
   { label: 'PDF', value: 'pdf', },
+]);
+
+const selectedPaperSize = ref('Letter');
+const paperSizes = ref([
+  'Letter',
+  'Tabloid',
+  'Legal',
+  'Statement',
+  'Executive',
+  'Folio',
+  'Quarto',
+  'A3',
+  'A4',
+  'A5',
+  'B4',
+  'B5',
+  'Fit',
 ]);
 
 function closeDialog() {
@@ -17,7 +34,7 @@ function closeDialog() {
 </script>
 
 <template>
-  <q-dialog :model-value="dialogVisible">
+  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog">
     <q-card style="min-width: 50em;">
       <q-card-section class="q-pa-none" style="background: #2D2D2D;">
         <div class="row items-center justify-between q-pa-sm">
@@ -26,39 +43,22 @@ function closeDialog() {
             <span class="q-dialog-title text-weight-bold text-h6">Save</span>
           </div>
           <div class="col-2 text-right">
-            <q-btn icon="close" no-caps @click="closeDialog"/>
+            <q-btn icon="close" flat round dense @click="closeDialog"></q-btn>
           </div>
         </div>
       </q-card-section>
       <q-card-section>
-        <q-field filled label="File Formats" stack-label>
-          <q-option-group v-model="selectedFileFormats" :options="fileFormats" color="primary" type="checkbox"/>
+        <q-field filled label="Output Formats" stack-label>
+          <q-option-group v-model="selectedFormats" :options="outputFormats" color="primary" type="checkbox"/>
         </q-field>
-
-<!--        <div class="q-pa-md bordered-section">-->
-<!--          <div class="section-title">Options</div>-->
-<!--          <q-option-group v-model="selectedFileTypes" :options="fileTypes" color="primary" type="checkbox"/>-->
-<!--        </div>        -->
+      </q-card-section>
+      <q-card-section>
+        <!-- TODO OPTIONS SLOT SHOW SIZES -->
+        <q-select filled options-dense v-model="selectedPaperSize" :options="paperSizes" label="PDF Paper Size"></q-select>
       </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <style scoped>
-.bordered-section {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  position: relative;
-}
-
-.section-title {
-  position: absolute;
-  top: -12px;
-  left: 16px;
-  background: white;
-  padding: 0 8px;
-  font-weight: bold;
-  color: #333;
-}
 </style>
