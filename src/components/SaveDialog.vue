@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { makeEqualWidths } from 'src/utils/components';
+
+const resetElement = ref<HTMLElement | null>(null);
+const saveElement = ref<HTMLElement | null>(null);
 
 const dialogVisible = defineModel<boolean>();
 
@@ -32,16 +36,17 @@ const paperSizes = ref([
   'Fit',
 ]);
 
+function setEqualWidths() {
+  makeEqualWidths([ resetElement, saveElement ]);
+}
+
 function closeDialog() {
   dialogVisible.value = false;
 }
-
-// TODO MAKE BUTTONS SAME WIDTH
-// CREATE TS UTIL FUNCTION FOR THIS
 </script>
 
 <template>
-  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog">
+  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog" @show="setEqualWidths">
     <q-card style="min-width: 50em;">
       <q-card-section class="q-pa-none" style="background: #2D2D2D;">
         <div class="row items-center justify-between q-pa-sm">
@@ -69,12 +74,16 @@ function closeDialog() {
         </q-field>
       </q-card-section>
       <q-card-section>
-        <q-select filled options-dense v-model="selectedPaperSize" :options="paperSizes" label="PDF Paper Size"></q-select>
+        <q-select filled options-dense v-model="selectedPaperSize" :options="paperSizes" label="PDF Paper Size"/>
       </q-card-section>
       <q-card-section>
         <div class="row items-center justify-between">
-          <q-btn icon="refresh" rounded color="primary" no-caps label="Reset"/>
-          <q-btn icon="save" rounded color="primary" no-caps label="Save"/>
+          <div class="row" ref="resetElement">
+            <q-btn class="col" icon="refresh" rounded color="primary" no-caps label="Reset"/>
+          </div>
+          <div class="row" ref="saveElement">
+            <q-btn class="col" icon="save" rounded color="primary" no-caps label="Save"/>
+          </div>
         </div>
       </q-card-section>
     </q-card>
