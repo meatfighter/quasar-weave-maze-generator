@@ -120,7 +120,7 @@ function closeDialog() {
       </q-card-section>
       <q-card-section>
         <div class="column justify-center items-center q-pa-lg" style="height: 250px; border: 2px dashed; border-radius: 7px;">
-          <div>Drag an image here, containing:</div>
+          <div>{{maskRgbas ? 'Or drag' : 'Drag'}} an image here, containing:</div>
           <ul>
             <li>White pixels for maze cells</li>
             <li>Black or transparent pixels for empty cells</li>
@@ -129,7 +129,7 @@ function closeDialog() {
         </div>
       </q-card-section>
       <q-card-section class="row justify-center">
-        <q-btn icon="drive_folder_upload" rounded no-caps color="primary" label="Or choose an image file"
+        <q-btn icon="drive_folder_upload" rounded no-caps color="primary" label="Or choose an image file here"
                @click="openFileBrowser"/>
         <input type="file" ref="fileInput" @change="onFileChange" style="display: none" accept="image/*" />
       </q-card-section>
