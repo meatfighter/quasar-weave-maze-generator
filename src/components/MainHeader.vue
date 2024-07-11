@@ -2,11 +2,10 @@
 import { updateMaze } from 'src/app/controller/maze-controller';
 import { useRenderStore } from 'stores/renderStore';
 import MaskDialog from 'components/MaskDialog.vue';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useOptionsStore } from 'stores/optionsStore';
 import { storeToRefs } from 'pinia';
 import SaveDialog from 'components/SaveDialog.vue';
-import { makeEqualWidths } from 'src/utils/components';
 
 const renderStore = useRenderStore();
 const { centerImage } = renderStore;
@@ -16,15 +15,6 @@ const { maskRgbas } = storeToRefs(optionsStore);
 
 const maskDialogVisible = ref(false);
 const saveDialogVisible = ref(false);
-
-const centerElement = ref<HTMLElement | null>(null);
-const maskElement = ref<HTMLElement | null>(null);
-const saveElement = ref<HTMLElement | null>(null);
-const printElement = ref<HTMLElement | null>(null);
-
-function setEqualWidths() {
-  makeEqualWidths([ centerElement, maskElement, saveElement, printElement ]);
-}
 
 function onGenerate() {
   updateMaze(false);
@@ -37,10 +27,6 @@ function showSaveDialog() {
 function showMaskDialog() {
   maskDialogVisible.value = true;
 }
-
-onMounted(() => {
-  setEqualWidths();
-});
 </script>
 
 <template>
@@ -52,29 +38,13 @@ onMounted(() => {
       </div>
       <q-img src="white-logo.svg" spinner-color="white" style="width: 45px;"/>
       <q-toolbar-title>Weave Maze Generator</q-toolbar-title>
-<!--      <div class="q-gutter-sm">-->
-<!--        <q-btn icon="center_focus_strong" rounded color="primary" no-caps label="Center" @click="centerImage"/>-->
-<!--        <q-btn icon="interests" rounded color="primary" no-caps label="Mask" @click="showMaskDialog">-->
-<!--          <q-badge v-if="maskRgbas" floating color="red" rounded></q-badge>-->
-<!--        </q-btn>-->
-<!--        <q-btn icon="save" rounded color="primary" no-caps label="Save" @click="showSaveDialog"/>-->
-<!--        <q-btn icon="print" rounded color="primary" no-caps label="Print"/>-->
-<!--      </div>-->
-      <div class="row q-gutter-sm">
-        <div class="row" ref="centerElement">
-          <q-btn class="col" icon="center_focus_strong" rounded color="primary" no-caps label="Center" @click="centerImage"/>
-        </div>
-        <div class="row" ref="maskElement">
-          <q-btn class="col" icon="interests" rounded color="primary" no-caps label="Mask" @click="showMaskDialog">
-            <q-badge v-if="maskRgbas" floating color="red" rounded></q-badge>
-          </q-btn>
-        </div>
-        <div class="row" ref="saveElement">
-          <q-btn class="col" icon="save" rounded color="primary" no-caps label="Save" @click="showSaveDialog"/>
-        </div>
-        <div class="row" ref="printElement">
-          <q-btn class="col" icon="print" rounded color="primary" no-caps label="Print"/>
-        </div>
+      <div class="q-gutter-sm">
+        <q-btn icon="center_focus_strong" rounded color="primary" no-caps label="Center" @click="centerImage"/>
+        <q-btn icon="interests" rounded color="primary" no-caps label="Mask" @click="showMaskDialog">
+          <q-badge v-if="maskRgbas" floating color="red" rounded></q-badge>
+        </q-btn>
+        <q-btn icon="save" rounded color="primary" no-caps label="Save" @click="showSaveDialog"/>
+        <q-btn icon="print" rounded color="primary" no-caps label="Print"/>
       </div>
     </q-toolbar>
   </q-header>

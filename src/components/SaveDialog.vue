@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { makeEqualWidths } from 'src/utils/components';
-
-const resetElement = ref<HTMLElement | null>(null);
-const saveElement = ref<HTMLElement | null>(null);
 
 const dialogVisible = defineModel<boolean>();
 
@@ -36,17 +32,13 @@ const paperSizes = ref([
   'Fit',
 ]);
 
-function setEqualWidths() {
-  makeEqualWidths([ resetElement, saveElement ]);
-}
-
 function closeDialog() {
   dialogVisible.value = false;
 }
 </script>
 
 <template>
-  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog" @show="setEqualWidths">
+  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog">
     <q-card style="min-width: 50em;">
       <q-card-section class="q-pa-none" style="background: #2D2D2D;">
         <div class="row items-center justify-between q-pa-sm">
@@ -63,27 +55,26 @@ function closeDialog() {
         <q-checkbox v-model="includeSolution" label="Include solution"></q-checkbox>
       </q-card-section>
       <q-card-section>
-        <q-input filled v-model="filenamePrefix" label="Filename prefix"></q-input>
-      </q-card-section>
-      <q-card-section>
-        <q-checkbox v-model="filenameTimestamp" label="Filename timestamp"></q-checkbox>
-      </q-card-section>
-      <q-card-section>
-        <q-field filled label="Output Formats" stack-label>
-          <q-option-group v-model="selectedFormats" :options="outputFormats" color="primary" type="checkbox"/>
+        <q-field outlined label="Filename" stack-label>
+          <div class="col q-pa-sm">
+            <div class="row">
+              <q-input class="col-8" filled v-model="filenamePrefix" label="Prefix"/>
+              <q-checkbox v-model="filenameTimestamp" label="Timestamp"/>
+            </div>
+          </div>
         </q-field>
       </q-card-section>
-      <q-card-section>
-        <q-select filled options-dense v-model="selectedPaperSize" :options="paperSizes" label="PDF Paper Size"/>
+      <q-card-section class="row q-gutter-sm items-stretch">
+        <q-field outlined label="Output Formats" stack-label>
+          <q-option-group v-model="selectedFormats" :options="outputFormats" color="primary" type="checkbox" inline/>
+        </q-field>
+        <q-select class="col" filled options-dense v-model="selectedPaperSize" :options="paperSizes"
+                  label="PDF Paper Size"/>
       </q-card-section>
       <q-card-section>
         <div class="row items-center justify-between">
-          <div class="row" ref="resetElement">
-            <q-btn class="col" icon="refresh" rounded color="primary" no-caps label="Reset"/>
-          </div>
-          <div class="row" ref="saveElement">
-            <q-btn class="col" icon="save" rounded color="primary" no-caps label="Save"/>
-          </div>
+          <q-btn icon="refresh" rounded color="primary" no-caps label="Reset"/>
+          <q-btn icon="save" rounded color="primary" no-caps label="Save"/>
         </div>
       </q-card-section>
     </q-card>
