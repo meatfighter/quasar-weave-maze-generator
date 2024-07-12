@@ -31,3 +31,18 @@ export function generatePermutations(arr: number[]): number[][] {
 }
 
 export const permutations = generatePermutations([ 0, 1, 2, 3 ]);
+
+export function compareArrays<T>(a: T[], b: T[]): boolean {
+    if (a === b) {
+        return true;
+    }
+    if (a.length !== b.length) {
+        return false;
+    }
+    for (const e of a) {
+        if (b.indexOf(e) < 0) {
+            return false;
+        }
+    }
+    return true;
+}

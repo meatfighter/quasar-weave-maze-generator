@@ -65,7 +65,7 @@ export class SvgRenderer extends CurveRenderer {
         return this;
     }
 
-    toBlob(): Promise<Blob> {
+    async toBlob(): Promise<Blob> {
         this.svg += '</svg>\n';
         return Promise.resolve(new Blob([this.svg], { type: 'image/svg+xml;charset=utf-8' }));
     }

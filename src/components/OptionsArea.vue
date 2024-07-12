@@ -49,16 +49,16 @@ const formattedImageHeight = computed({
 </script>
 
 <template>
-  <q-scroll-area class="full-height-scroll-area">
-    <q-input label="Maze Width (cells)" v-model.number="mazeWidth" type="number" filled :min="MIN_MAZE_SIZE"
+  <q-scroll-area class="full-height-scroll-area" style="padding: 1px 12px 0 12px;">
+    <q-input label="Maze Width (cells)" v-model.number="mazeWidth" type="number" borderless :min="MIN_MAZE_SIZE"
              :max="MAX_MAZE_SIZE" :step="MAZE_SIZE_STEP"/>
-    <q-input label="Maze Height (cells)" v-model.number="mazeHeight" type="number" filled :min="MIN_MAZE_SIZE"
+    <q-input label="Maze Height (cells)" v-model.number="mazeHeight" type="number" borderless :min="MIN_MAZE_SIZE"
              :max="MAX_MAZE_SIZE" :step="MAZE_SIZE_STEP"/>
-    <q-input label="Loops (%)" v-model.number="loopPct" type="number" filled :min="MIN_LOOP_PCT" :max="MAX_LOOP_PCT"
+    <q-input label="Loops (%)" v-model.number="loopPct" type="number" borderless :min="MIN_LOOP_PCT" :max="MAX_LOOP_PCT"
              :step="LOOP_PCT_STEP"/>
-    <q-input label="Crosses (%)" v-model.number="crossPct" type="number" filled :min="MIN_CROSS_PCT"
+    <q-input label="Crosses (%)" v-model.number="crossPct" type="number" borderless :min="MIN_CROSS_PCT"
              :max="MAX_CROSS_PCT" :step="CROSS_PCT_STEP"/>
-    <q-field label="Long Passages" filled stack-label>
+    <q-field label="Long Passages" borderless stack-label>
       <template v-slot:control>
         <q-toggle v-model="longPassages"></q-toggle>
       </template>
@@ -66,27 +66,27 @@ const formattedImageHeight = computed({
 
     <q-separator></q-separator>
 
-    <q-field label="Solution" filled stack-label>
+    <q-field label="Solution" borderless stack-label>
       <template v-slot:control>
         <q-toggle v-model="solution"></q-toggle>
       </template>
     </q-field>
-    <q-field label="Square Corners" filled stack-label>
+    <q-field label="Square Corners" borderless stack-label>
       <template v-slot:control>
         <q-toggle v-model="squareCorners"></q-toggle>
       </template>
     </q-field>
-    <q-input label="Cell Size (px)" v-model.number="formattedCellSize" type="number" filled :min="MIN_CELL_SIZE"
+    <q-input label="Cell Size (px)" v-model.number="formattedCellSize" type="number" borderless :min="MIN_CELL_SIZE"
              :step="CELL_SIZE_STEP"/>
-    <q-input label="Image Width (px)" v-model.number="formattedImageWidth" type="number" filled :min="MIN_IMAGE_SIZE"
+    <q-input label="Image Width (px)" v-model.number="formattedImageWidth" type="number" borderless :min="MIN_IMAGE_SIZE"
              :max="MAX_IMAGE_SIZE" :step="IMAGE_SIZE_STEP"/>
-    <q-input label="Image Height (px)" v-model.number="formattedImageHeight" type="number" filled :min="MIN_IMAGE_SIZE"
+    <q-input label="Image Height (px)" v-model.number="formattedImageHeight" type="number" borderless :min="MIN_IMAGE_SIZE"
              :max="MAX_IMAGE_SIZE" :step="IMAGE_SIZE_STEP"/>
-    <q-input label="Line Width (%)" v-model.number="lineWidthPct" type="number" filled :min="MIN_LINE_WIDTH_PCT"
+    <q-input label="Line Width (%)" v-model.number="lineWidthPct" type="number" borderless :min="MIN_LINE_WIDTH_PCT"
              :max="MAX_LINE_WIDTH_PCT" :step="LINE_WIDTH_PCT_STEP"/>
-    <q-input label="Passage Width (%)" v-model.number="passageWidthPct" type="number" filled
+    <q-input label="Passage Width (%)" v-model.number="passageWidthPct" type="number" borderless
              :min="MIN_PASSAGE_WIDTH_PCT" :max="MAX_PASSAGE_WIDTH_PCT" :step="PASSAGE_WIDTH_PCT_STEP"/>
-    <q-input label="Background Color" filled v-model="backgroundColor">
+    <q-input label="Background Color" borderless v-model="backgroundColor">
       <template v-slot:append>
         <q-icon name="colorize" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -95,7 +95,7 @@ const formattedImageHeight = computed({
         </q-icon>
       </template>
     </q-input>
-    <q-input label="Wall Color" filled v-model="wallColor">
+    <q-input label="Wall Color" borderless v-model="wallColor">
       <template v-slot:append>
         <q-icon name="colorize" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -104,7 +104,7 @@ const formattedImageHeight = computed({
         </q-icon>
       </template>
     </q-input>
-    <q-input label="Solution Color" filled v-model="solutionColor">
+    <q-input label="Solution Color" borderless v-model="solutionColor">
       <template v-slot:append>
         <q-icon name="colorize" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
