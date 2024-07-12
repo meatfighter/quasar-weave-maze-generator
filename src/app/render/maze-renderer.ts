@@ -52,7 +52,7 @@ function renderPaths(r: Renderer, paths: Segment[][], roundedCorners: boolean) {
     r.stroke();
 }
 
-function generateSolutionPaths(maze: Maze, cellSize: number, cellMarginFrac: number): Segment[][] {
+export function generateSolutionPaths(maze: Maze, cellSize: number, cellMarginFrac: number): Segment[][] {
 
     const c = new PathOptimizer();
 
@@ -123,7 +123,7 @@ function generateSolutionPaths(maze: Maze, cellSize: number, cellMarginFrac: num
     return c.getPaths();
 }
 
-function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number): Segment[][] {
+export function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number): Segment[][] {
 
     const c = new PathOptimizer();
 
@@ -361,6 +361,10 @@ function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: number)
 //         }
 //     }
 // }
+
+export function render(cancelState: CancelState, maze: Maze, options: RenderOptions, wallPaths: Segment[][], solutionPaths?: Segment[][]): Promise<Blob | null> {
+
+}
 
 export async function renderMaze(cancelState: CancelState, maze: Maze, options: RenderOptions): Promise<Blob | null> {
 

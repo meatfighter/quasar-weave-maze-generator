@@ -1,7 +1,8 @@
 import { Color } from 'src/app/color/Color';
+import { PaperSize } from 'src/app/render/PaperSize';
 
 export interface Renderer {
-    setSize(width: number, height: number): Renderer;
+    setSize(width: number, height: number, paperSize?: PaperSize): Renderer;
     setStroke(lineCap: string, lineWidth: number, color: Color): Renderer;
     setFill(color: Color): Renderer;
     fillRect(x: number, y: number, w: number, h: number): Renderer;

@@ -58,7 +58,7 @@ const resettable = computed(() =>
 const savable = computed(() =>
     selectedFormats.value.length > 0
         && validateFilename(filenamePrefix.value)
-        && validateFilename(filenameSolutionSuffix.value)
+        && (!includeSolution.value || validateFilename(filenameSolutionSuffix.value))
 );
 
 function reset() {
@@ -101,7 +101,7 @@ function closeDialog() {
           <q-checkbox v-model="filenameTimestamp" label="Timestamp"/>
           <q-input class="q-pl-lg" borderless v-model="filenamePrefix" label="Prefix" style="max-width: 7.6em;"/>
           <q-input class="q-pl-lg" borderless v-model="filenameSolutionSuffix" label="Solution Suffix"
-                   style="max-width: 12em;"/>
+                   :disable="!includeSolution" style="max-width: 12em;"/>
         </div>
         </div>
         Formats

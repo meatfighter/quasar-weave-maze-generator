@@ -1,6 +1,7 @@
 import { Renderer } from 'src/app/render/Renderer';
 import { Color } from 'src/app/color/Color';
 import { eq } from 'src/app/render/Point';
+import { PaperSize } from 'src/app/render/PaperSize';
 
 export abstract class CurveRenderer implements Renderer {
 
@@ -9,7 +10,7 @@ export abstract class CurveRenderer implements Renderer {
     abstract lineTo(x: number, y: number): Renderer;
     abstract moveTo(x: number, y: number): Renderer;
     abstract setFill(color: Color): Renderer;
-    abstract setSize(width: number, height: number): Renderer;
+    abstract setSize(width: number, height: number, paperSize?: PaperSize): Renderer;
     abstract setStroke(linecap: string, lineWidth: number, color: Color): Renderer;
     abstract stroke(): Renderer;
     abstract toBlob(): Promise<Blob>;

@@ -2,17 +2,37 @@ import { jsPDF } from 'jspdf';
 import { Renderer } from 'src/app/render/Renderer';
 import { Color, toHexCode } from 'src/app/color/Color';
 import { CurveRenderer } from 'src/app/render/CurveRenderer';
+import { PaperSize } from 'src/app/render/PaperSize';
 
 export class PdfRenderer extends CurveRenderer {
 
     private doc = new jsPDF();
 
-    setSize(width: number, height: number): Renderer {
-        this.doc = new jsPDF({
-            orientation: 'portrait',
-            unit: 'px',
-            format: [ width, height ],
-        });
+    setSize(width: number, height: number, paperSize: PaperSize): Renderer {
+        if (paperSize === PaperSize.FIT) {
+            this.doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [ width, height ],
+            });
+        } else {
+            this.doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [ paperSize.widthDots, paperSize.heightDots ],
+            });
+            let w = paperSize.printableWidthDots;
+            let scale = w / width;
+            let h = scale * height;
+            if (h > paperSize.printableHeightDots) {
+                h = paperSize.printableHeightDots;
+                scale = h / height;
+                w = scale * width;
+            }
+            this.doc.setCurrentTransformationMatrix(this.doc.Matrix(scale, 0, 0, scale, (paperSize.widthDots - w) / 2,
+                    (paperSize.heightDots - h) / 2));
+        }
+
         return this;
     }
 
