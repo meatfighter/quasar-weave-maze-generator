@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { compareArrays } from 'src/utils/arrays';
+import { validateFilename } from 'src/utils/files';
 
 const FORMAT_PNG = 'png';
 const FORMAT_SVG = 'svg';
@@ -9,6 +10,7 @@ const FORMAT_PDF = 'pdf';
 const DEFAULT_INCLUDE_SOLUTION = true;
 const DEFAULT_FILENAME_TIMESTAMP = true;
 const DEFAULT_FILENAME_PREFIX = 'maze';
+const DEFAULT_FILENAME_SOLUTION_SUFFIX = 'solution';
 const DEFAULT_FORMATS = [ FORMAT_PNG, FORMAT_SVG, FORMAT_PDF ];
 const DEFAULT_PAPER_SIZE = 'Letter';
 
@@ -18,6 +20,7 @@ const includeSolution = ref(DEFAULT_INCLUDE_SOLUTION);
 
 const filenameTimestamp = ref(DEFAULT_FILENAME_TIMESTAMP);
 const filenamePrefix = ref(DEFAULT_FILENAME_PREFIX);
+const filenameSolutionSuffix = ref(DEFAULT_FILENAME_SOLUTION_SUFFIX);
 
 const selectedFormats = ref(DEFAULT_FORMATS);
 const formats = ref([
@@ -47,16 +50,28 @@ const resettable = computed(() =>
     includeSolution.value !== DEFAULT_INCLUDE_SOLUTION
         || filenameTimestamp.value !== DEFAULT_FILENAME_TIMESTAMP
         || filenamePrefix.value !== DEFAULT_FILENAME_PREFIX
+        || filenameSolutionSuffix.value !== DEFAULT_FILENAME_SOLUTION_SUFFIX
         || selectedPaperSize.value !== DEFAULT_PAPER_SIZE
         || !compareArrays(selectedFormats.value, DEFAULT_FORMATS)
+);
+
+const savable = computed(() =>
+    selectedFormats.value.length > 0
+        && validateFilename(filenamePrefix.value)
+        && validateFilename(filenameSolutionSuffix.value)
 );
 
 function reset() {
   includeSolution.value = DEFAULT_INCLUDE_SOLUTION;
   filenameTimestamp.value = DEFAULT_FILENAME_TIMESTAMP;
   filenamePrefix.value = DEFAULT_FILENAME_PREFIX;
+  filenameSolutionSuffix.value = DEFAULT_FILENAME_SOLUTION_SUFFIX;
   selectedFormats.value = DEFAULT_FORMATS;
   selectedPaperSize.value = DEFAULT_PAPER_SIZE;
+}
+
+function save() {
+  console.log('--save');
 }
 
 function closeDialog() {
@@ -84,7 +99,9 @@ function closeDialog() {
         Filenames
         <div class="row items-center">
           <q-checkbox v-model="filenameTimestamp" label="Timestamp"/>
-          <q-input class="q-pl-lg col" borderless v-model="filenamePrefix" label="Prefix"/>
+          <q-input class="q-pl-lg" borderless v-model="filenamePrefix" label="Prefix" style="max-width: 7.6em;"/>
+          <q-input class="q-pl-lg" borderless v-model="filenameSolutionSuffix" label="Solution Suffix"
+                   style="max-width: 12em;"/>
         </div>
         </div>
         Formats
@@ -97,7 +114,7 @@ function closeDialog() {
       <q-card-section>
         <div class="row items-center justify-between">
           <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" :disable="!resettable" @click="reset"/>
-          <q-btn icon="save_as" rounded color="primary" no-caps label="Save ZIP"/>
+          <q-btn icon="save_as" rounded color="primary" no-caps label="Save ZIP" :disable="!savable" @click="save"/>
         </div>
       </q-card-section>
     </q-card>
