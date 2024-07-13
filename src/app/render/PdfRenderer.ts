@@ -37,6 +37,10 @@ export class PdfRenderer extends CurveRenderer {
                     (paperSize.heightDots - h) / 2));
         }
 
+        this.doc.rect(0, 0, width, height, null);
+        this.doc.clip();
+        this.doc.discardPath();
+
         return this;
     }
 
@@ -58,6 +62,7 @@ export class PdfRenderer extends CurveRenderer {
     }
 
     beginPath(): Renderer {
+        this.doc.discardPath();
         this.x0 = 0;
         this.y0 = 0;
         return this;
@@ -66,6 +71,7 @@ export class PdfRenderer extends CurveRenderer {
     fillRect(x: number, y: number, w: number, h: number): Renderer {
         if (!(this.ignoreWhiteFill && this.whiteFill)) {
             this.doc.rect(x, y, w, h, 'F');
+            this.doc.discardPath();
         }
         return this;
     }
