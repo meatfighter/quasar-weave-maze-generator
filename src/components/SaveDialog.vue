@@ -2,55 +2,37 @@
 import { computed, ref } from 'vue';
 import { compareArrays } from 'src/utils/arrays';
 import { validateFilename } from 'src/utils/files';
-
-const FORMAT_PNG = 'png';
-const FORMAT_SVG = 'svg';
-const FORMAT_PDF = 'pdf';
+import { DEFAULT_PAPER_SIZE, PAPER_SIZES } from 'src/app/save/PaperSize';
+import { DEFAULT_PREFIX, DEFAULT_SOLUTION_SUFFIX } from 'src/app/save/SaveOptions';
+import { FileFormat } from 'src/app/save/FileFormat';
 
 const DEFAULT_INCLUDE_SOLUTION = true;
 const DEFAULT_FILENAME_TIMESTAMP = true;
-const DEFAULT_FILENAME_PREFIX = 'maze';
-const DEFAULT_FILENAME_SOLUTION_SUFFIX = 'solution';
-const DEFAULT_FORMATS = [ FORMAT_PNG, FORMAT_SVG, FORMAT_PDF ];
-const DEFAULT_PAPER_SIZE = 'Letter';
+const DEFAULT_FORMATS = Object.values(FileFormat);
 
 const dialogVisible = defineModel<boolean>();
 
 const includeSolution = ref(DEFAULT_INCLUDE_SOLUTION);
 
 const filenameTimestamp = ref(DEFAULT_FILENAME_TIMESTAMP);
-const filenamePrefix = ref(DEFAULT_FILENAME_PREFIX);
-const filenameSolutionSuffix = ref(DEFAULT_FILENAME_SOLUTION_SUFFIX);
+const filenamePrefix = ref(DEFAULT_PREFIX);
+const filenameSolutionSuffix = ref(DEFAULT_SOLUTION_SUFFIX);
 
 const selectedFormats = ref(DEFAULT_FORMATS);
 const formats = ref([
-  { label: 'PNG', value: FORMAT_PNG, },
-  { label: 'SVG', value: FORMAT_SVG, },
-  { label: 'PDF', value: FORMAT_PDF, },
+  { label: 'PNG', value: FileFormat.PNG, },
+  { label: 'SVG', value: FileFormat.SVG, },
+  { label: 'PDF', value: FileFormat.PDF, },
 ]);
 
 const selectedPaperSize = ref(DEFAULT_PAPER_SIZE);
-const paperSizes = ref([
-  'Letter',
-  'Tabloid',
-  'Legal',
-  'Statement',
-  'Executive',
-  'Folio',
-  'Quarto',
-  'A3',
-  'A4',
-  'A5',
-  'B4',
-  'B5',
-  'Fit',
-]);
+const paperSizes = ref(PAPER_SIZES);
 
 const resettable = computed(() =>
     includeSolution.value !== DEFAULT_INCLUDE_SOLUTION
         || filenameTimestamp.value !== DEFAULT_FILENAME_TIMESTAMP
-        || filenamePrefix.value !== DEFAULT_FILENAME_PREFIX
-        || filenameSolutionSuffix.value !== DEFAULT_FILENAME_SOLUTION_SUFFIX
+        || filenamePrefix.value !== DEFAULT_PREFIX
+        || filenameSolutionSuffix.value !== DEFAULT_SOLUTION_SUFFIX
         || selectedPaperSize.value !== DEFAULT_PAPER_SIZE
         || !compareArrays(selectedFormats.value, DEFAULT_FORMATS)
 );
@@ -64,8 +46,8 @@ const savable = computed(() =>
 function reset() {
   includeSolution.value = DEFAULT_INCLUDE_SOLUTION;
   filenameTimestamp.value = DEFAULT_FILENAME_TIMESTAMP;
-  filenamePrefix.value = DEFAULT_FILENAME_PREFIX;
-  filenameSolutionSuffix.value = DEFAULT_FILENAME_SOLUTION_SUFFIX;
+  filenamePrefix.value = DEFAULT_PREFIX;
+  filenameSolutionSuffix.value = DEFAULT_SOLUTION_SUFFIX;
   selectedFormats.value = DEFAULT_FORMATS;
   selectedPaperSize.value = DEFAULT_PAPER_SIZE;
 }
@@ -108,7 +90,8 @@ function closeDialog() {
         <div class="row items-center">
           <q-option-group inline v-model="selectedFormats" :options="formats" color="primary" type="checkbox"/>
           <q-select class="q-pl-lg" borderless options-dense v-model="selectedPaperSize" :options="paperSizes"
-                    label="PDF Paper Size" :disable="selectedFormats.indexOf(FORMAT_PDF) < 0" style="min-width: 13em;"/>
+                    option-label="name" label="PDF Paper Size" :disable="selectedFormats.indexOf(FileFormat.PDF) < 0"
+                    style="min-width: 13em;"/>
         </div>
       </q-card-section>
       <q-card-section>

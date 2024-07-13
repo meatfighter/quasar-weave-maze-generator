@@ -1,7 +1,7 @@
 import { Renderer } from 'src/app/render/Renderer';
 import { Color, isWhite } from 'src/app/color/Color';
 import { eq } from 'src/app/render/Point';
-import { PaperSize } from 'src/app/render/PaperSize';
+import { PaperSize } from 'src/app/save/PaperSize';
 
 export abstract class CurveRenderer implements Renderer {
 

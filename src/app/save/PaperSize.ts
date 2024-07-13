@@ -9,41 +9,6 @@ enum DimensionUnits {
     MILLIMETERS,
 }
 
-export function toPaperSize(paperSize: string | undefined): PaperSize {
-    if (!paperSize) {
-        return DEFAULT_PAPER_SIZE;
-    }
-    switch (paperSize.trim().toLowerCase()) {
-        case 'letter':
-            return PaperSize.LETTER;
-        case 'tabloid':
-            return PaperSize.TABLOID;
-        case 'legal':
-            return PaperSize.LEGAL;
-        case 'statement':
-            return PaperSize.STATEMENT;
-        case 'executive':
-            return PaperSize.EXECUTIVE;
-        case 'folio':
-            return PaperSize.FOLIO;
-        case 'quarto':
-            return PaperSize.QUARTO;
-        case 'a3':
-            return PaperSize.A3;
-        case 'a4':
-            return PaperSize.A4;
-        case 'a5':
-            return PaperSize.A5;
-        case 'b4':
-            return PaperSize.B4_JIS;
-        case 'b5':
-            return PaperSize.B5_JIS;
-        case 'fit':
-            return PaperSize.FIT;
-    }
-    throw new Error('\nUnknown paper size.\n');
-}
-
 export class PaperSize {
 
     readonly widthDots: number;
@@ -82,3 +47,19 @@ export class PaperSize {
 }
 
 export const DEFAULT_PAPER_SIZE = PaperSize.LETTER;
+
+export const PAPER_SIZES = [
+    PaperSize.LETTER,
+    PaperSize.TABLOID,
+    PaperSize.LEGAL,
+    PaperSize.STATEMENT,
+    PaperSize.EXECUTIVE,
+    PaperSize.FOLIO,
+    PaperSize.QUARTO,
+    PaperSize.A3,
+    PaperSize.A4,
+    PaperSize.A5,
+    PaperSize.B4_JIS,
+    PaperSize.B5_JIS,
+    PaperSize.FIT,
+];

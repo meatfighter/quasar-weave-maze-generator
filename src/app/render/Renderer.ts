@@ -1,5 +1,5 @@
 import { Color } from 'src/app/color/Color';
-import { PaperSize } from 'src/app/render/PaperSize';
+import { PaperSize } from 'src/app/save/PaperSize';
 
 export interface Renderer {
     setSize(width: number, height: number, paperSize?: PaperSize): Renderer;
