@@ -292,7 +292,7 @@ export async function getPaths(cancelState: CancelState, maze: Maze, options: Re
 export async function renderMaze(cancelState: CancelState, renderer: Renderer, options: RenderOptions,
                                  wallPaths: Segment[][], solutionPaths?: Segment[][]): Promise<Blob | null> {
 
-    console.log(++yieldCounter + ' ' + cancelState); // TODO REMOVE, ALSO DO I NEED CANCEL STATE HERE?!!!
+    console.log(++yieldCounter + ' ' + cancelState + ' ' + solutionPaths); // TODO REMOVE, ALSO DO I NEED CANCEL STATE HERE?!!!
 
     const linecap = options.roundedCorners ? 'round' : 'square';
     const lineWidth = options.lineWidthFrac * options.cellSize;

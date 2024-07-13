@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { Renderer } from 'src/app/render/Renderer';
-import { Color, toHexCode } from 'src/app/color/Color';
+import { Color } from 'src/app/color/Color';
 import { CurveRenderer } from 'src/app/render/CurveRenderer';
 import { PaperSize } from 'src/app/save/PaperSize';
 
@@ -43,19 +43,23 @@ export class PdfRenderer extends CurveRenderer {
     setStroke(lineCap: string, lineWidth: number, color: Color): Renderer {
         this.doc.setLineCap(lineCap);
         this.doc.setLineWidth(lineWidth);
-        this.doc.setDrawColor(toHexCode(color));
+        this.doc.setGState(this.doc.GState({ 'stroke-opacity': color.alpha }));
+        this.doc.setDrawColor(color.red, color.green, color.blue);
         return this;
     }
 
     setFill(color: Color): Renderer {
         super.setFill(color);
         if (!(this.ignoreWhiteFill && this.whiteFill)) {
-            this.doc.setFillColor(toHexCode(color));
+            this.doc.setGState(this.doc.GState({ 'opacity': color.alpha }));
+            this.doc.setFillColor(color.red, color.green, color.blue);
         }
         return this;
     }
 
     beginPath(): Renderer {
+        this.x0 = 0;
+        this.y0 = 0;
         return this;
     }
 
@@ -68,11 +72,15 @@ export class PdfRenderer extends CurveRenderer {
 
     moveTo(x: number, y: number): Renderer {
         this.doc.moveTo(x, y);
+        this.x0 = x;
+        this.y0 = y;
         return this;
     }
 
     lineTo(x: number, y: number): Renderer {
         this.doc.lineTo(x, y);
+        this.x0 = x;
+        this.y0 = y;
         return this;
     }
 

@@ -20,6 +20,7 @@ import { FileFormat } from 'src/app/save/FileFormat';
 import { PngRenderer } from 'src/app/render/PngRenderer';
 import { getTimestamp } from 'src/utils/time';
 import { toPaperSize } from 'src/app/save/PaperSize';
+import { PdfRenderer } from 'src/app/render/PdfRenderer';
 
 let currentCancelState: CancelState | null = null;
 let generatingMaze = false;
@@ -84,7 +85,7 @@ async function saveMaze(request: SaveRequest) {
                     renderer = new SvgRenderer(true);
                     break;
                 default:
-                    renderer = new PngRenderer(true);
+                    renderer = new PdfRenderer(true);
                     break;
             }
             renderer.setSize(renderOptions.imageWidth, renderOptions.imageHeight, paperSize);
