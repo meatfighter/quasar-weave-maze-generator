@@ -1,5 +1,4 @@
 import { FileFormat } from 'src/app/save/FileFormat';
-import { PaperSize } from 'src/app/save/PaperSize';
 
 export class SaveOptions {
     constructor(public solution: boolean,
@@ -7,7 +6,7 @@ export class SaveOptions {
                 public prefix: string,
                 public solutionSuffix: string,
                 public fileFormats: Set<FileFormat>,
-                public paperSize: PaperSize) {
+                public paperSizeName: string) {
     }
 }
 

@@ -277,8 +277,20 @@ export function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: 
     return c.getPaths();
 }
 
-export function renderMaze(cancelState: CancelState, renderer: Renderer, options: RenderOptions, wallPaths: Segment[][],
-                           solutionPaths?: Segment[][]): Promise<Blob | null> {
+export async function getPaths(cancelState: CancelState, maze: Maze, options: RenderOptions, solution: boolean):
+        Promise<{ wallPaths: Segment[][], solutionPaths?: Segment[][] }> {
+
+    console.log(++yieldCounter + ' ' + cancelState); // TODO REMOVE, ALSO DO I NEED CANCEL STATE HERE?!!!
+
+    const cellMarginFrac = (1 - options.passageWidthFrac) / 2;
+    return {
+        wallPaths: generateWallPaths(maze, options.cellSize, cellMarginFrac),
+        solutionPaths: solution ? generateSolutionPaths(maze, options.cellSize, cellMarginFrac) : undefined,
+    };
+}
+
+export async function renderMaze(cancelState: CancelState, renderer: Renderer, options: RenderOptions,
+                                 wallPaths: Segment[][], solutionPaths?: Segment[][]): Promise<Blob | null> {
 
     console.log(++yieldCounter + ' ' + cancelState); // TODO REMOVE, ALSO DO I NEED CANCEL STATE HERE?!!!
 

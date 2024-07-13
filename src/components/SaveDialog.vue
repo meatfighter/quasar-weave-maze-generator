@@ -3,8 +3,9 @@ import { computed, ref } from 'vue';
 import { compareArrays } from 'src/utils/arrays';
 import { validateFilename } from 'src/utils/files';
 import { DEFAULT_PAPER_SIZE, PAPER_SIZES } from 'src/app/save/PaperSize';
-import { DEFAULT_PREFIX, DEFAULT_SOLUTION_SUFFIX } from 'src/app/save/SaveOptions';
+import { DEFAULT_PREFIX, DEFAULT_SOLUTION_SUFFIX, SaveOptions } from 'src/app/save/SaveOptions';
 import { FileFormat } from 'src/app/save/FileFormat';
+import { onSave } from 'src/app/controller/controller';
 
 const DEFAULT_INCLUDE_SOLUTION = true;
 const DEFAULT_FILENAME_TIMESTAMP = true;
@@ -37,7 +38,7 @@ const resettable = computed(() =>
         || !compareArrays(selectedFormats.value, DEFAULT_FORMATS)
 );
 
-const savable = computed(() =>
+const downloadable = computed(() =>
     selectedFormats.value.length > 0
         && validateFilename(filenamePrefix.value)
         && (!includeSolution.value || validateFilename(filenameSolutionSuffix.value))
@@ -52,8 +53,9 @@ function reset() {
   selectedPaperSize.value = DEFAULT_PAPER_SIZE;
 }
 
-function save() {
-  console.log('--save');
+function download() {
+  onSave(new SaveOptions(includeSolution.value, filenameTimestamp.value, filenamePrefix.value,
+      filenameSolutionSuffix.value, new Set<FileFormat>(selectedFormats.value), selectedPaperSize.value.name));
 }
 
 function closeDialog() {
@@ -97,7 +99,8 @@ function closeDialog() {
       <q-card-section>
         <div class="row items-center justify-between">
           <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" :disable="!resettable" @click="reset"/>
-          <q-btn icon="save_as" rounded color="primary" no-caps label="Save ZIP" :disable="!savable" @click="save"/>
+          <q-btn icon="download" rounded color="primary" no-caps label="Download ZIP" :disable="!downloadable"
+                 @click="download"/>
         </div>
       </q-card-section>
     </q-card>

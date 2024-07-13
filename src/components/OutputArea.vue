@@ -2,7 +2,7 @@
 import { onMounted } from 'vue';
 import { useRenderStore } from 'stores/renderStore';
 import { storeToRefs } from 'pinia';
-import { updateMaze } from 'src/app/controller/maze-controller';
+import { updateMaze } from 'src/app/controller/controller';
 
 const renderStore = useRenderStore();
 const { svgContainer, svgImage, processing } = storeToRefs(renderStore);

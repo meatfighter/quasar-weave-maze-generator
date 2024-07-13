@@ -1,3 +1,4 @@
+import { saveAs } from 'file-saver';
 import MazeWorker from 'src/app/worker/worker?worker';
 import { MessageType } from 'src/app/worker/MessageType';
 import { Message } from 'src/app/worker/Message';
@@ -25,6 +26,10 @@ import {
 import { MazeRequest } from 'src/app/worker/MazeRequest';
 import { AckResponse } from 'src/app/worker/AckResponse';
 import { nextTick } from 'vue';
+import { SaveResponse } from 'src/app/worker/SaveResponse';
+import { toBlob } from 'src/utils/blob';
+import { SaveOptions } from 'src/app/save/SaveOptions';
+import { SaveRequest } from 'src/app/worker/SaveRequest';
 
 const UPDATE_PROCESSING_DELAY_MILLIS = 400; // Doherty Threshold
 let updateProcessingTimeoutId: number | undefined;
@@ -61,6 +66,9 @@ worker.onmessage = <T>(event: MessageEvent<Message<T>>) => {
         case MessageType.MAZE_RESPONSE:
             onMazeResponse(message.data as MazeResponse);
             break;
+        case MessageType.SAVE_RESPONSE:
+            void onSaveResponse(message.data as SaveResponse);
+            break;
         case MessageType.ACK_RESPONSE:
             onAckResponse((message.data as AckResponse).id);
             break;
@@ -89,6 +97,14 @@ function onAckResponse(id: number) {
     updateProcessing();
 }
 
+async function onSaveResponse(response: SaveResponse) {
+    try {
+        saveAs(await toBlob(response.url), response.filename);
+    } finally {
+        URL.revokeObjectURL(response.url);
+    }
+}
+
 function onMazeResponse(response: MazeResponse) {
     onAckResponse(response.id);
     void nextTick(() => {
@@ -97,6 +113,15 @@ function onMazeResponse(response: MazeResponse) {
         }
         url.value = response.url;
     });
+}
+
+export function onSave(saveOptions: SaveOptions) {
+    const id = idSequence++;
+    worker.postMessage(new Message(MessageType.SAVE_REQUEST, new SaveRequest(
+            id,
+            new RenderOptions(solution, roundedCorners, cellSize, imageWidth, imageHeight, lineWidthFrac,
+                    passageWidthFrac, wallColor, solutionColor, backgroundColor),
+            saveOptions)));
 }
 
 export function updateMaze(renderOnly: boolean) {

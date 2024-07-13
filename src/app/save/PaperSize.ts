@@ -63,3 +63,12 @@ export const PAPER_SIZES = [
     PaperSize.B5_JIS,
     PaperSize.FIT,
 ];
+
+export function toPaperSize(name: string): PaperSize {
+    for (const paperSize of PAPER_SIZES) {
+        if (name === paperSize.name) {
+            return paperSize;
+        }
+    }
+    return DEFAULT_PAPER_SIZE;
+}

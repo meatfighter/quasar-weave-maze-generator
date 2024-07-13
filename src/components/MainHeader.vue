@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { updateMaze } from 'src/app/controller/maze-controller';
+import { updateMaze } from 'src/app/controller/controller';
 import { useRenderStore } from 'stores/renderStore';
 import MaskDialog from 'components/MaskDialog.vue';
 import { ref } from 'vue';

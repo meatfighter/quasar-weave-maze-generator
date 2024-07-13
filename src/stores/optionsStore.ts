@@ -8,7 +8,7 @@ import {
     onLoopPct, onMask,
     onMazeHeight,
     onMazeWidth, onPassageWidthPct, onSolution, onSolutionColor, onSquareCorners, onWallColor
-} from 'src/app/controller/maze-controller';
+} from 'src/app/controller/controller';
 import {
     DEFAULT_BACKGROUND_COLOR,
     DEFAULT_CELL_SIZE,
