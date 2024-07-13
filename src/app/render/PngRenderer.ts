@@ -1,10 +1,17 @@
 import { Renderer } from 'src/app/render/Renderer';
-import { Color, toRgba } from 'src/app/color/Color';
+import { Color, isWhite, toRgba } from 'src/app/color/Color';
 
 export class PngRenderer implements Renderer {
 
     private canvas = new OffscreenCanvas(1, 1);
     private ctx = this.canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
+
+    private readonly ignoreWhiteFill: boolean;
+    private whiteFill = false;
+
+    constructor(ignoreWhiteFill: boolean) {
+        this.ignoreWhiteFill = ignoreWhiteFill;
+    }
 
     setSize(width: number, height: number): Renderer {
         this.canvas = new OffscreenCanvas(width, height);
@@ -20,12 +27,17 @@ export class PngRenderer implements Renderer {
     }
 
     setFill(color: Color): Renderer {
-        this.ctx.fillStyle = toRgba(color);
+        this.whiteFill = isWhite(color);
+        if (!(this.ignoreWhiteFill && this.whiteFill)) {
+            this.ctx.fillStyle = toRgba(color);
+        }
         return this;
     }
 
     fillRect(x: number, y: number, w: number, h: number): Renderer {
-        this.ctx.fillRect(x, y, w, h);
+        if (!(this.ignoreWhiteFill && this.whiteFill)) {
+            this.ctx.fillRect(x, y, w, h);
+        }
         return this;
     }
 

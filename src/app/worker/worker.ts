@@ -2,7 +2,11 @@ import { Message } from './Message';
 import { MessageType } from 'src/app/worker/MessageType';
 import { CancelState } from 'src/app/worker/CancelState';
 import { generateMaze } from 'src/app/maze/maze-generator';
-import { renderMaze } from 'src/app/render/maze-renderer';
+import {
+    generateSolutionPaths,
+    generateWallPaths,
+    renderMaze,
+} from 'src/app/render/maze-renderer';
 import { MazeRequest } from 'src/app/worker/MazeRequest';
 import { Maze } from 'src/app/maze/Maze';
 import { RenderOptions } from 'src/app/render/RenderOptions';
@@ -11,6 +15,8 @@ import { AckResponse } from 'src/app/worker/AckResponse';
 import { loadMask } from 'src/app/mask/mask-loader';
 import { Rgbas } from 'src/app/color/Rgbas';
 import { toUint8ClampedArray } from 'src/utils/blob';
+import { Segment } from 'src/app/render/Segment';
+import { SvgRenderer } from 'src/app/render/SvgRenderer';
 
 let currentCancelState: CancelState | null = null;
 let generatingMaze = false;
@@ -88,7 +94,15 @@ async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequ
 }
 
 async function drawMaze(cancelState: CancelState, id: number, maze: Maze, renderOptions: RenderOptions) {
-    const blob = await renderMaze(cancelState, maze, renderOptions);
+    const cellMarginFrac = (1 - renderOptions.passageWidthFrac) / 2;
+    const solutionPaths: Segment[][] | undefined = renderOptions.solution
+            ? generateSolutionPaths(maze, renderOptions.cellSize, cellMarginFrac) : undefined;
+    const wallPaths = generateWallPaths(maze, renderOptions.cellSize, cellMarginFrac);
+
+    const renderer = new SvgRenderer(false);
+    renderer.setSize(renderOptions.imageWidth, renderOptions.imageHeight);
+
+    const blob = await renderMaze(cancelState, renderer, renderOptions, wallPaths, solutionPaths);
     if (!blob || cancelState.cancelled) {
         self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(id)));
         return;

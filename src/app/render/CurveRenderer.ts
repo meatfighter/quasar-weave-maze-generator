@@ -1,5 +1,5 @@
 import { Renderer } from 'src/app/render/Renderer';
-import { Color } from 'src/app/color/Color';
+import { Color, isWhite } from 'src/app/color/Color';
 import { eq } from 'src/app/render/Point';
 import { PaperSize } from 'src/app/render/PaperSize';
 
@@ -9,7 +9,6 @@ export abstract class CurveRenderer implements Renderer {
     abstract fillRect(x: number, y: number, w: number, h: number): Renderer;
     abstract lineTo(x: number, y: number): Renderer;
     abstract moveTo(x: number, y: number): Renderer;
-    abstract setFill(color: Color): Renderer;
     abstract setSize(width: number, height: number, paperSize?: PaperSize): Renderer;
     abstract setStroke(linecap: string, lineWidth: number, color: Color): Renderer;
     abstract stroke(): Renderer;
@@ -20,6 +19,18 @@ export abstract class CurveRenderer implements Renderer {
 
     protected x0 = 0;
     protected y0 = 0;
+
+    protected readonly ignoreWhiteFill: boolean;
+    protected whiteFill = false;
+
+    constructor(ignoreWhiteFill: boolean) {
+        this.ignoreWhiteFill = ignoreWhiteFill;
+    }
+
+    setFill(color: Color): Renderer {
+        this.whiteFill = isWhite(color);
+        return this;
+    }
 
     arcTo(x1: number, _y1: number, x2: number, y2: number, radius: number): Renderer {
 

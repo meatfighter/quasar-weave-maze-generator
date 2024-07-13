@@ -6,6 +6,10 @@ export class Color {
     }
 }
 
+export function isWhite(color: Color) {
+    return color.red === 255 && color.green === 255 && color.blue === 255 && color.alpha === 1;
+}
+
 export function toRgba(color: Color) {
     return `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha})`;
 }

@@ -9,6 +9,10 @@ export class SvgRenderer extends CurveRenderer {
     private fillStr = '';
     private pathStr = '';
 
+    constructor(ignoreWhiteFill: boolean) {
+        super(ignoreWhiteFill);
+    }
+
     setSize(width: number, height: number): Renderer {
         // eslint-disable-next-line quotes
         this.svg += `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" `
@@ -23,13 +27,18 @@ export class SvgRenderer extends CurveRenderer {
     }
 
     setFill(color: Color): Renderer {
-        this.fillStr = `fill="${toRgb(color)}" fill-opacity="${color.alpha}"`;
+        super.setFill(color);
+        if (!(this.ignoreWhiteFill && this.whiteFill)) {
+            this.fillStr = `fill="${toRgb(color)}" fill-opacity="${color.alpha}"`;
+        }
         return this;
     }
 
     fillRect(x: number, y: number, w: number, h: number): Renderer {
-        this.svg += `<rect x="${x - w / 10}" y="${y - h / 10}" width="${1.2 * w}" height="${1.2 * h}" ${this.fillStr}/>`
-                + '\n';
+        if (!(this.ignoreWhiteFill && this.whiteFill)) {
+            this.svg += `<rect x="${x - w / 10}" y="${y - h / 10}" width="${1.2 * w}" height="${1.2 * h}" `
+                    + `${this.fillStr}/>\n`;
+        }
         return this;
     }
 

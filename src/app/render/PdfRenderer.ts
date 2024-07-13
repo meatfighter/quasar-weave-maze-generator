@@ -8,6 +8,10 @@ export class PdfRenderer extends CurveRenderer {
 
     private doc = new jsPDF();
 
+    constructor(ignoreWhiteFill: boolean) {
+        super(ignoreWhiteFill);
+    }
+
     setSize(width: number, height: number, paperSize: PaperSize): Renderer {
         if (paperSize === PaperSize.FIT) {
             this.doc = new jsPDF({
@@ -44,7 +48,10 @@ export class PdfRenderer extends CurveRenderer {
     }
 
     setFill(color: Color): Renderer {
-        this.doc.setFillColor(toHexCode(color));
+        super.setFill(color);
+        if (!(this.ignoreWhiteFill && this.whiteFill)) {
+            this.doc.setFillColor(toHexCode(color));
+        }
         return this;
     }
 
@@ -53,7 +60,9 @@ export class PdfRenderer extends CurveRenderer {
     }
 
     fillRect(x: number, y: number, w: number, h: number): Renderer {
-        this.doc.rect(x, y, w, h, 'F');
+        if (!(this.ignoreWhiteFill && this.whiteFill)) {
+            this.doc.rect(x, y, w, h, 'F');
+        }
         return this;
     }
 

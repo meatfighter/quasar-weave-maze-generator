@@ -13,3 +13,11 @@ export interface Renderer {
     stroke(): Renderer;
     toBlob(): Promise<Blob>;
 }
+
+export interface RendererConstructor {
+    new (ignoreWhiteFill: boolean): Renderer;
+}
+
+export function createRenderer(ctor: RendererConstructor, ignoreWhiteFill: boolean) {
+    return new ctor(ignoreWhiteFill);
+}
