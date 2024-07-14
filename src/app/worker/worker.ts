@@ -135,6 +135,8 @@ function clearMask() {
     mask = undefined;
 }
 
+let timeId = 0;
+
 async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequest) {
     if (request.maskBlobUrl) {
         if (request.maskBlobUrl !== maskBlobUrl) {
@@ -150,13 +152,17 @@ async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequ
         clearMask();
     }
 
+    const id = (timeId++) + 'generateAndRenderMaze generateMaze';
+    console.time(id);
     const _maze = await generateMaze(cancelState, request.mazeOptions, mask);
     if (!_maze || cancelState.cancelled) {
+        console.timeEnd(id);
         self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(request.id)));
         return;
     }
     maze = _maze;
     generatingMaze = false;
+    console.timeEnd(id);
 
     if (saveRequest) {
         const request = saveRequest;
@@ -170,6 +176,7 @@ async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequ
 }
 
 async function drawMaze(cancelState: CancelState, id: number, maze: Maze, renderOptions: RenderOptions) {
+
     const { wallPaths, solutionPaths } = await getPaths(cancelState, maze, renderOptions, renderOptions.solution);
     if (cancelState.cancelled) {
         self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(id)));

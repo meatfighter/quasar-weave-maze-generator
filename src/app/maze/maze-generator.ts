@@ -7,7 +7,7 @@ import { CancelState } from 'src/app/worker/CancelState';
 import { MazeOptions } from 'src/app/maze/MazeOptions';
 import { yieldToEventThread } from 'src/utils/threads';
 
-const ITERATIONS_PER_YIELD = 256;
+const ITERATIONS_PER_YIELD = 509;
 let yieldCounter = ITERATIONS_PER_YIELD;
 
 function assignRegion(region: number, seed: Node, stack: Node[]): Node[] {
