@@ -114,8 +114,7 @@ function closeDialog() {
           <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" :disable="!resettable || saving"
                  @click="reset"/>
           <q-btn icon="download" rounded color="primary" no-caps :loading="saving" :disable="!downloadable"
-                 @click="download">
-            Download ZIP
+                 @click="download" label="Download ZIP">
             <template v-slot:loading>
               <q-spinner class="on-left"/>
               Zipping...

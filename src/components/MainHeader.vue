@@ -6,6 +6,7 @@ import { ref } from 'vue';
 import { useOptionsStore } from 'stores/optionsStore';
 import { storeToRefs } from 'pinia';
 import SaveDialog from 'components/SaveDialog.vue';
+import PrintDialog from 'components/PrintDialog.vue';
 
 const renderStore = useRenderStore();
 const { centerImage } = renderStore;
@@ -15,6 +16,7 @@ const { maskRgbas } = storeToRefs(optionsStore);
 
 const maskDialogVisible = ref(false);
 const saveDialogVisible = ref(false);
+const printDialogVisible = ref(false);
 
 function onGenerate() {
   updateMaze(false);
@@ -26,6 +28,10 @@ function showSaveDialog() {
 
 function showMaskDialog() {
   maskDialogVisible.value = true;
+}
+
+function showPrintDialog() {
+  printDialogVisible.value = true;
 }
 </script>
 
@@ -44,12 +50,13 @@ function showMaskDialog() {
           <q-badge v-if="maskRgbas" floating color="red" rounded></q-badge>
         </q-btn>
         <q-btn icon="save" rounded color="primary" no-caps label="Save" @click="showSaveDialog"/>
-        <q-btn icon="print" rounded color="primary" no-caps label="Print"/>
+        <q-btn icon="print" rounded color="primary" no-caps label="Print" @click="showPrintDialog"/>
       </div>
     </q-toolbar>
   </q-header>
   <MaskDialog v-model="maskDialogVisible"/>
   <SaveDialog v-model="saveDialogVisible"/>
+  <PrintDialog v-model="printDialogVisible"/>
 </template>
 
 <style scoped>
