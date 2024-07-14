@@ -2,9 +2,9 @@
 import { computed, ref, watch } from 'vue';
 import { compareArrays } from 'src/utils/arrays';
 import { validateFilename } from 'src/utils/files';
-import { DEFAULT_PAPER_SIZE, PAPER_SIZES } from 'src/app/save/PaperSize';
-import { DEFAULT_PREFIX, DEFAULT_SOLUTION_SUFFIX, SaveOptions } from 'src/app/save/SaveOptions';
-import { FileFormat } from 'src/app/save/FileFormat';
+import { DEFAULT_PAPER_SIZE, PAPER_SIZES } from 'src/app/file/PaperSize';
+import { DEFAULT_PREFIX, DEFAULT_SOLUTION_SUFFIX, SaveOptions } from 'src/app/file/SaveOptions';
+import { FileFormat } from 'src/app/file/FileFormat';
 import { onSave } from 'src/app/controller/controller';
 import { useSaveStore } from 'stores/saveStore';
 import { storeToRefs } from 'pinia';

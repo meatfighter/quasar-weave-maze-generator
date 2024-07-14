@@ -16,10 +16,10 @@ import { SvgRenderer } from 'src/app/render/SvgRenderer';
 import { SaveRequest } from 'src/app/worker/SaveRequest';
 import { SaveResponse } from 'src/app/worker/SaveResponse';
 import { Renderer } from 'src/app/render/Renderer';
-import { FileFormat } from 'src/app/save/FileFormat';
+import { FileFormat } from 'src/app/file/FileFormat';
 import { PngRenderer } from 'src/app/render/PngRenderer';
 import { getTimestamp } from 'src/utils/time';
-import { toPaperSize } from 'src/app/save/PaperSize';
+import { toPaperSize } from 'src/app/file/PaperSize';
 import { PdfRenderer } from 'src/app/render/PdfRenderer';
 
 let currentCancelState: CancelState | null = null;

@@ -28,7 +28,7 @@ import { AckResponse } from 'src/app/worker/AckResponse';
 import { nextTick } from 'vue';
 import { SaveResponse } from 'src/app/worker/SaveResponse';
 import { toBlob } from 'src/utils/blob';
-import { SaveOptions } from 'src/app/save/SaveOptions';
+import { SaveOptions } from 'src/app/file/SaveOptions';
 import { SaveRequest } from 'src/app/worker/SaveRequest';
 import { useSaveStore } from 'stores/saveStore';
 

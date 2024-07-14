@@ -2,7 +2,7 @@ import { jsPDF } from 'jspdf';
 import { Renderer } from 'src/app/render/Renderer';
 import { Color } from 'src/app/color/Color';
 import { CurveRenderer } from 'src/app/render/CurveRenderer';
-import { PaperSize } from 'src/app/save/PaperSize';
+import { PaperSize } from 'src/app/file/PaperSize';
 
 export class PdfRenderer extends CurveRenderer {
 

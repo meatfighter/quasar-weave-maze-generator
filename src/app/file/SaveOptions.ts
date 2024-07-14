@@ -1,4 +1,4 @@
-import { FileFormat } from 'src/app/save/FileFormat';
+import { FileFormat } from 'src/app/file/FileFormat';
 
 export class SaveOptions {
     constructor(public solution: boolean,

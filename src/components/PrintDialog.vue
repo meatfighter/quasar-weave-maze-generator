@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { DEFAULT_PAPER_SIZE, PAPER_SIZES } from 'src/app/save/PaperSize';
+import { DEFAULT_PAPER_SIZE, PAPER_SIZES } from 'src/app/file/PaperSize';
 
 const dialogVisible = defineModel<boolean>();
 
