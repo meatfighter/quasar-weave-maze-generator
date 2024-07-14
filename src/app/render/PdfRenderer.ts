@@ -20,21 +20,41 @@ export class PdfRenderer extends CurveRenderer {
                 format: [ width, height ],
             });
         } else {
-            this.doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'pt',
-                format: [ paperSize.widthDots, paperSize.heightDots ],
-            });
-            let w = paperSize.printableWidthDots;
-            let scale = w / width;
-            let h = scale * height;
-            if (h > paperSize.printableHeightDots) {
-                h = paperSize.printableHeightDots;
-                scale = h / height;
-                w = scale * width;
+            let w1 = paperSize.printableWidthDots;
+            let s1 = w1 / width;
+            let h1 = s1 * height;
+            if (h1 > paperSize.printableHeightDots) {
+                h1 = paperSize.printableHeightDots;
+                s1 = h1 / height;
+                w1 = s1 * width;
             }
-            this.doc.setCurrentTransformationMatrix(this.doc.Matrix(scale, 0, 0, scale, (paperSize.widthDots - w) / 2,
-                    paperSize.heightDots * (1 - scale) - (paperSize.heightDots - h) / 2));
+
+            let w2 = paperSize.printableHeightDots;
+            let s2 = w2 / width;
+            let h2 = s2 * height;
+            if (h2 > paperSize.printableWidthDots) {
+                h2 = paperSize.printableWidthDots;
+                s2 = h2 / height;
+                w2 = s2 * width;
+            }
+
+            if (w1 >= w2) {
+                this.doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'pt',
+                    format: [ paperSize.widthDots, paperSize.heightDots ],
+                });
+                this.doc.setCurrentTransformationMatrix(this.doc.Matrix(s1, 0, 0, s1, (paperSize.widthDots - w1) / 2,
+                        paperSize.heightDots * (1 - s1) - (paperSize.heightDots - h1) / 2));
+            } else {
+                this.doc = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'pt',
+                    format: [ paperSize.widthDots, paperSize.heightDots ],
+                });
+                this.doc.setCurrentTransformationMatrix(this.doc.Matrix(s2, 0, 0, s2, (paperSize.heightDots - w2) / 2,
+                        paperSize.widthDots * (1 - s2) - (paperSize.widthDots - h2) / 2));
+            }
         }
 
         this.doc.rect(0, 0, width, height, null);
