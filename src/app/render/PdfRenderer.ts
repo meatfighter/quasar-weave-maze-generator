@@ -20,7 +20,6 @@ export class PdfRenderer extends CurveRenderer {
                 format: [ width, height ],
             });
         } else {
-            console.log(`${paperSize.widthDots} x ${paperSize.heightDots}`);
             this.doc = new jsPDF({
                 orientation: 'portrait',
                 unit: 'pt',

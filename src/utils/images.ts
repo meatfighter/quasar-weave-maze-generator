@@ -34,7 +34,6 @@ async function makeRgbas(blobUrl: string, displayName?: string): Promise<Rgbas> 
 }
 
 function validateRgbas(rgbas: Rgbas): Rgbas {
-    console.log(`validate: ${rgbas.width} ${rgbas.height}`);
     if (rgbas.width === 0 || rgbas.height === 0) {
         throw new Error('The image must be at least 1\u00D71 pixels.');
     }

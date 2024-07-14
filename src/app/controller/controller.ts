@@ -30,12 +30,16 @@ import { SaveResponse } from 'src/app/worker/SaveResponse';
 import { toBlob } from 'src/utils/blob';
 import { SaveOptions } from 'src/app/save/SaveOptions';
 import { SaveRequest } from 'src/app/worker/SaveRequest';
+import { useSaveStore } from 'stores/saveStore';
 
 const UPDATE_PROCESSING_DELAY_MILLIS = 400; // Doherty Threshold
 let updateProcessingTimeoutId: number | undefined;
 
 const renderStore = useRenderStore();
 const { url, processing } = storeToRefs(renderStore);
+
+const saveStore = useSaveStore();
+const { saving } = storeToRefs(saveStore);
 
 let mazeWidth = DEFAULT_MAZE_SIZE;
 let mazeHeight = DEFAULT_MAZE_SIZE;
@@ -101,6 +105,7 @@ async function onSaveResponse(response: SaveResponse) {
     try {
         saveAs(await toBlob(response.url), response.filename);
     } finally {
+        saving.value = false;
         URL.revokeObjectURL(response.url);
     }
 }
@@ -116,6 +121,7 @@ function onMazeResponse(response: MazeResponse) {
 }
 
 export function onSave(saveOptions: SaveOptions) {
+    saving.value = true;
     worker.postMessage(new Message(MessageType.SAVE_REQUEST, new SaveRequest(
             new RenderOptions(solution, roundedCorners, cellSize, imageWidth, imageHeight, lineWidthFrac,
                     passageWidthFrac, wallColor, solutionColor, backgroundColor),

@@ -1,17 +1,28 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { compareArrays } from 'src/utils/arrays';
 import { validateFilename } from 'src/utils/files';
 import { DEFAULT_PAPER_SIZE, PAPER_SIZES } from 'src/app/save/PaperSize';
 import { DEFAULT_PREFIX, DEFAULT_SOLUTION_SUFFIX, SaveOptions } from 'src/app/save/SaveOptions';
 import { FileFormat } from 'src/app/save/FileFormat';
 import { onSave } from 'src/app/controller/controller';
+import { useSaveStore } from 'stores/saveStore';
+import { storeToRefs } from 'pinia';
 
 const DEFAULT_INCLUDE_SOLUTION = true;
 const DEFAULT_FILENAME_TIMESTAMP = true;
 const DEFAULT_FORMATS = Object.values(FileFormat);
 
 const dialogVisible = defineModel<boolean>();
+
+const saveStore = useSaveStore();
+const { saving } = storeToRefs(saveStore);
+watch(saving, (value, oldValue) => {
+  console.log(`saving ${saving.value}`);
+  if (!value && oldValue) {
+    closeDialog();
+  }
+});
 
 const includeSolution = ref(DEFAULT_INCLUDE_SOLUTION);
 
@@ -64,7 +75,7 @@ function closeDialog() {
 </script>
 
 <template>
-  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog">
+  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog" :no-esc-dismiss="saving">
     <q-card>
       <q-card-section class="q-pa-none" style="background: #2D2D2D;">
         <div class="row items-center justify-between q-pa-sm">
@@ -73,34 +84,42 @@ function closeDialog() {
             <span class="q-dialog-title text-weight-bold text-h6">Save</span>
           </div>
           <div class="col-2 text-right">
-            <q-btn icon="close" flat round dense @click="closeDialog"></q-btn>
+            <q-btn icon="close" flat round dense @click="closeDialog" :disable="saving"></q-btn>
           </div>
         </div>
       </q-card-section>
       <q-card-section class="q-by-none">
-        <q-checkbox class="q-pb-lg" v-model="includeSolution" label="Include solution files"/>
+        <q-checkbox class="q-pb-lg" v-model="includeSolution" label="Include solution files" :disable="saving"/>
         <div class="q-pb-lg">
-        Filenames
-        <div class="row items-center">
-          <q-checkbox v-model="filenameTimestamp" label="Timestamp"/>
-          <q-input class="q-pl-lg" borderless v-model="filenamePrefix" label="Prefix" style="max-width: 7.6em;"/>
-          <q-input class="q-pl-lg" borderless v-model="filenameSolutionSuffix" label="Solution Suffix"
-                   :disable="!includeSolution" style="max-width: 12em;"/>
-        </div>
+          Filenames
+          <div class="row items-center">
+            <q-checkbox v-model="filenameTimestamp" label="Timestamp" :disable="saving"/>
+            <q-input class="q-pl-lg" borderless v-model="filenamePrefix" label="Prefix" :disable="saving"
+                     style="max-width: 7.6em;"/>
+            <q-input class="q-pl-lg" borderless v-model="filenameSolutionSuffix" label="Solution Suffix"
+                     :disable="!includeSolution || saving" style="max-width: 12em;"/>
+          </div>
         </div>
         Formats
         <div class="row items-center">
-          <q-option-group inline v-model="selectedFormats" :options="formats" color="primary" type="checkbox"/>
+          <q-option-group inline v-model="selectedFormats" :options="formats" color="primary" type="checkbox"
+                          :disable="saving"/>
           <q-select class="q-pl-lg" borderless options-dense v-model="selectedPaperSize" :options="paperSizes"
-                    option-label="name" label="PDF Paper Size" :disable="selectedFormats.indexOf(FileFormat.PDF) < 0"
-                    style="min-width: 13em;"/>
+                    option-label="name" label="PDF Paper Size"
+                    :disable="selectedFormats.indexOf(FileFormat.PDF) < 0 || saving" style="min-width: 13em;"/>
         </div>
       </q-card-section>
       <q-card-section>
         <div class="row items-center justify-between">
-          <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" :disable="!resettable" @click="reset"/>
-          <q-btn icon="download" rounded color="primary" no-caps label="Download ZIP" :disable="!downloadable"
-                 @click="download"/>
+          <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" :disable="!resettable || saving"
+                 @click="reset"/>
+          <q-btn icon="download" rounded color="primary" no-caps :disable="!downloadable" @click="download">
+            Download ZIP
+            <template v-slot:loading>
+              <q-spinner/>
+              Zipping...
+            </template>
+          </q-btn>
         </div>
       </q-card-section>
     </q-card>
