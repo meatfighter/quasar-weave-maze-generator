@@ -1,5 +1,3 @@
-// import * as path from 'path';
-// import { promises as fs } from 'fs';
 import { Maze } from 'src/app/maze/Maze';
 import { PathOptimizer } from './PathOptimizer';
 import { Segment } from './Segment';
@@ -8,10 +6,6 @@ import { Line } from './Line';
 import { Arc } from './Arc';
 import { Renderer } from 'src/app/render/Renderer';
 import { RenderOptions } from 'src/app/render/RenderOptions';
-import { CancelState } from 'src/app/worker/CancelState';
-
-const ITERATIONS_PER_YIELD = 256;
-let yieldCounter = ITERATIONS_PER_YIELD;
 
 function renderPaths(r: Renderer, paths: Segment[][], roundedCorners: boolean) {
     r.beginPath();
@@ -277,10 +271,8 @@ export function generateWallPaths(maze: Maze, cellSize: number, cellMarginFrac: 
     return c.getPaths();
 }
 
-export async function getPaths(cancelState: CancelState, maze: Maze, options: RenderOptions, solution: boolean):
-        Promise<{ wallPaths: Segment[][], solutionPaths?: Segment[][] }> {
-
-    console.log(++yieldCounter + ' ' + cancelState); // TODO REMOVE, ALSO DO I NEED CANCEL STATE HERE?!!!
+export function getPaths(maze: Maze, options: RenderOptions, solution: boolean):
+        { wallPaths: Segment[][], solutionPaths?: Segment[][] } {
 
     const cellMarginFrac = (1 - options.passageWidthFrac) / 2;
     return {
@@ -289,10 +281,8 @@ export async function getPaths(cancelState: CancelState, maze: Maze, options: Re
     };
 }
 
-export async function renderMaze(cancelState: CancelState, renderer: Renderer, options: RenderOptions,
-                                 wallPaths: Segment[][], solutionPaths?: Segment[][]): Promise<Blob | null> {
-
-    console.log(++yieldCounter + ' ' + cancelState + ' ' + solutionPaths); // TODO REMOVE, ALSO DO I NEED CANCEL STATE HERE?!!!
+export async function renderMaze(renderer: Renderer, options: RenderOptions, wallPaths: Segment[][],
+                                 solutionPaths?: Segment[][]): Promise<Blob> {
 
     const linecap = options.roundedCorners ? 'round' : 'square';
     const lineWidth = options.lineWidthFrac * options.cellSize;

@@ -23,7 +23,6 @@ import { toPaperSize } from 'src/app/save/PaperSize';
 import { PdfRenderer } from 'src/app/render/PdfRenderer';
 
 let currentCancelState: CancelState | null = null;
-let generatingMaze = false;
 let maze: Maze | null = null;
 let currentRenderOptions: RenderOptions | null = null;
 let mask: boolean[][] | undefined = undefined;
@@ -37,36 +36,21 @@ self.onmessage = <T>(event: MessageEvent<Message<T>>) => {
             onMazeRequest(message.data as MazeRequest);
             break;
         case MessageType.SAVE_REQUEST:
-            onSaveRequest(message.data as SaveRequest);
+            void onSaveRequest(message.data as SaveRequest);
             break;
     }
 };
 
-function onSaveRequest(request: SaveRequest) {
+async function onSaveRequest(request: SaveRequest) {
     if (maze) {
-        void saveMaze(request);
-        return;
-    }
-
-    if (saveRequest) {
-        self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(saveRequest.id)));
-    }
-    saveRequest = request;
-}
-
-async function saveMaze(request: SaveRequest) {
-    if (!maze) {
-        self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(request.id)));
+        saveRequest = null;
+    } else {
+        saveRequest = request;
         return;
     }
 
     const { saveOptions, renderOptions } = request;
-    const cancelState = new CancelState(); // TODO THIS DOES NOT MAKE SENSE
-    const { wallPaths, solutionPaths } = await getPaths(cancelState, maze, renderOptions, saveOptions.solution);
-    if (cancelState.cancelled) {
-        self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(request.id)));
-        return;
-    }
+    const { wallPaths, solutionPaths } = getPaths(maze, renderOptions, saveOptions.solution);
 
     const paperSize = toPaperSize(saveOptions.paperSizeName);
     const suffix = `-${saveOptions.solutionSuffix}`;
@@ -90,39 +74,32 @@ async function saveMaze(request: SaveRequest) {
             }
             renderer.setSize(renderOptions.imageWidth, renderOptions.imageHeight, paperSize);
 
-            const blob = await renderMaze(cancelState, renderer, renderOptions, wallPaths,
-                    solution ? solutionPaths : undefined);
-            if (!blob || cancelState.cancelled) {
-                self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(request.id)));
-                return;
-            }
-            zip.file(`${saveOptions.prefix}${solution ? suffix : ''}${timestamp}.${fileFormat}`, blob);
+            zip.file(`${saveOptions.prefix}${solution ? suffix : ''}${timestamp}.${fileFormat}`,
+                    await renderMaze(renderer, renderOptions, wallPaths, solution ? solutionPaths : undefined));
         }
     }
 
-    self.postMessage(new Message(MessageType.SAVE_RESPONSE, new SaveResponse(request.id,
-            `${saveOptions.prefix}${timestamp}.zip`, URL.createObjectURL(await zip.generateAsync({ type: 'blob' })))));
+    self.postMessage(new Message(MessageType.SAVE_RESPONSE, new SaveResponse(`${saveOptions.prefix}${timestamp}.zip`,
+            URL.createObjectURL(await zip.generateAsync({ type: 'blob' })))));
 }
 
 function onMazeRequest(request: MazeRequest) {
-    if (request.renderOnly && generatingMaze) {
+    if (request.renderOnly && currentCancelState) {
         currentRenderOptions = request.renderOptions;
         self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(request.id)));
         return;
     }
     currentRenderOptions = null;
 
+    if (request.renderOnly && maze) {
+        void drawMaze(request.id, maze, request.renderOptions);
+        return;
+    }
+
     if (currentCancelState) {
         currentCancelState.cancelled = true;
     }
     currentCancelState = new CancelState();
-
-    if (request.renderOnly && maze) {
-        void drawMaze(currentCancelState, request.id, maze, request.renderOptions);
-        return;
-    }
-
-    generatingMaze = true;
     maze = null;
     void generateAndRenderMaze(currentCancelState, request);
 }
@@ -134,8 +111,6 @@ function clearMask() {
     }
     mask = undefined;
 }
-
-let timeId = 0;
 
 async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequest) {
     if (request.maskBlobUrl) {
@@ -152,46 +127,31 @@ async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequ
         clearMask();
     }
 
-    const id = (timeId++) + 'generateAndRenderMaze generateMaze';
-    console.time(id);
     const _maze = await generateMaze(cancelState, request.mazeOptions, mask);
     if (!_maze || cancelState.cancelled) {
-        console.timeEnd(id);
         self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(request.id)));
         return;
     }
     maze = _maze;
-    generatingMaze = false;
-    console.timeEnd(id);
+    currentCancelState = null;
 
     if (saveRequest) {
-        const request = saveRequest;
-        saveRequest = null;
-        await saveMaze(request);
+        await onSaveRequest(saveRequest);
     }
 
     const renderingOptions = currentRenderOptions || request.renderOptions;
     currentRenderOptions = null;
-    await drawMaze(cancelState, request.id, _maze, renderingOptions);
+    await drawMaze(request.id, _maze, renderingOptions);
 }
 
-async function drawMaze(cancelState: CancelState, id: number, maze: Maze, renderOptions: RenderOptions) {
+async function drawMaze(id: number, maze: Maze, renderOptions: RenderOptions) {
 
-    const { wallPaths, solutionPaths } = await getPaths(cancelState, maze, renderOptions, renderOptions.solution);
-    if (cancelState.cancelled) {
-        self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(id)));
-        return;
-    }
+    const { wallPaths, solutionPaths } = getPaths(maze, renderOptions, renderOptions.solution);
 
     const renderer = new SvgRenderer(false);
     renderer.setSize(renderOptions.imageWidth, renderOptions.imageHeight);
 
-    const blob = await renderMaze(cancelState, renderer, renderOptions, wallPaths, solutionPaths);
-    if (!blob || cancelState.cancelled) {
-        self.postMessage(new Message(MessageType.ACK_RESPONSE, new AckResponse(id)));
-        return;
-    }
-    currentCancelState = null;
+    const blob = await renderMaze(renderer, renderOptions, wallPaths, solutionPaths);
 
     self.postMessage(new Message(MessageType.MAZE_RESPONSE, new MazeResponse(id, URL.createObjectURL(blob))));
 }

@@ -1,6 +1,5 @@
 export class SaveResponse {
-    constructor(public readonly id: number,
-                public readonly filename: string,
+    constructor(public readonly filename: string,
                 public readonly url: string) {
     }
 }

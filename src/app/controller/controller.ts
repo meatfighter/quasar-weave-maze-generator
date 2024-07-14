@@ -116,9 +116,7 @@ function onMazeResponse(response: MazeResponse) {
 }
 
 export function onSave(saveOptions: SaveOptions) {
-    const id = idSequence++;
     worker.postMessage(new Message(MessageType.SAVE_REQUEST, new SaveRequest(
-            id,
             new RenderOptions(solution, roundedCorners, cellSize, imageWidth, imageHeight, lineWidthFrac,
                     passageWidthFrac, wallColor, solutionColor, backgroundColor),
             saveOptions)));
