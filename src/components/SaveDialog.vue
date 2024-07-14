@@ -18,7 +18,6 @@ const dialogVisible = defineModel<boolean>();
 const saveStore = useSaveStore();
 const { saving } = storeToRefs(saveStore);
 watch(saving, (value, oldValue) => {
-  console.log(`saving ${saving.value}`);
   if (!value && oldValue) {
     closeDialog();
   }
@@ -75,7 +74,8 @@ function closeDialog() {
 </script>
 
 <template>
-  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog" :no-esc-dismiss="saving">
+  <q-dialog :model-value="dialogVisible" @before-hide="closeDialog" :no-esc-dismiss="saving"
+            :no-backdrop-dismiss="saving" :no-route-dismiss="saving" :auto-close="false">
     <q-card>
       <q-card-section class="q-pa-none" style="background: #2D2D2D;">
         <div class="row items-center justify-between q-pa-sm">
@@ -113,10 +113,11 @@ function closeDialog() {
         <div class="row items-center justify-between">
           <q-btn icon="refresh" rounded color="primary" no-caps label="Reset" :disable="!resettable || saving"
                  @click="reset"/>
-          <q-btn icon="download" rounded color="primary" no-caps :disable="!downloadable" @click="download">
+          <q-btn icon="download" rounded color="primary" no-caps :loading="saving" :disable="!downloadable"
+                 @click="download">
             Download ZIP
             <template v-slot:loading>
-              <q-spinner/>
+              <q-spinner class="on-left"/>
               Zipping...
             </template>
           </q-btn>
