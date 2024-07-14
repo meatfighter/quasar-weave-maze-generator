@@ -35,7 +35,7 @@ export class PdfRenderer extends CurveRenderer {
                 w = scale * width;
             }
             this.doc.setCurrentTransformationMatrix(this.doc.Matrix(scale, 0, 0, scale, (paperSize.widthDots - w) / 2,
-                    (paperSize.heightDots - h) / 2));
+                    paperSize.heightDots * (1 - scale) - (paperSize.heightDots - h) / 2));
         }
 
         this.doc.rect(0, 0, width, height, null);
