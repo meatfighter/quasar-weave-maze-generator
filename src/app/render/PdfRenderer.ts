@@ -16,13 +16,14 @@ export class PdfRenderer extends CurveRenderer {
         if (paperSize === PaperSize.FIT) {
             this.doc = new jsPDF({
                 orientation: 'portrait',
-                unit: 'px',
+                unit: 'pt',
                 format: [ width, height ],
             });
         } else {
+            console.log(`${paperSize.widthDots} x ${paperSize.heightDots}`);
             this.doc = new jsPDF({
                 orientation: 'portrait',
-                unit: 'px',
+                unit: 'pt',
                 format: [ paperSize.widthDots, paperSize.heightDots ],
             });
             let w = paperSize.printableWidthDots;
