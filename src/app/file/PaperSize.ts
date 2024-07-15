@@ -31,6 +31,10 @@ export class PaperSize {
         this.printableHeightDots = this.heightDots - 2 * MARGIN_DOTS;
     }
 
+    equals(other: PaperSize): boolean {
+        return this === other || this.name === other.name;
+    }
+
     static readonly LETTER = new PaperSize('Letter', 8.5, 11);
     static readonly TABLOID = new PaperSize('Tabloid', 11, 17);
     static readonly LEGAL = new PaperSize('Legal', 8.5, 14);

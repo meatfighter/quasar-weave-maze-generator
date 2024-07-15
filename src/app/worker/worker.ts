@@ -21,6 +21,8 @@ import { PngRenderer } from 'src/app/render/PngRenderer';
 import { getTimestamp } from 'src/utils/time';
 import { toPaperSize } from 'src/app/file/PaperSize';
 import { PdfRenderer } from 'src/app/render/PdfRenderer';
+import { PrintRequest } from 'src/app/worker/PrintRequest';
+import { PrintResponse } from 'src/app/worker/PrintResponse';
 
 let currentCancelState: CancelState | null = null;
 let maze: Maze | null = null;
@@ -28,6 +30,7 @@ let currentRenderOptions: RenderOptions | null = null;
 let mask: boolean[][] | undefined = undefined;
 let maskBlobUrl: string | null = null;
 let saveRequest: SaveRequest | null = null;
+let printRequest: PrintRequest | null = null;
 
 self.onmessage = <T>(event: MessageEvent<Message<T>>) => {
     const message = event.data;
@@ -38,8 +41,29 @@ self.onmessage = <T>(event: MessageEvent<Message<T>>) => {
         case MessageType.SAVE_REQUEST:
             void onSaveRequest(message.data as SaveRequest);
             break;
+        case MessageType.PRINT_REQUEST:
+            void onPrintRequest(message.data as PrintRequest);
+            break;
     }
 };
+
+async function onPrintRequest(request: PrintRequest) {
+    if (maze) {
+        printRequest = null;
+    } else {
+        printRequest = request;
+        return;
+    }
+
+    const { printOptions, renderOptions } = request;
+    const { wallPaths, solutionPaths } = getPaths(maze, renderOptions, renderOptions.solution);
+
+    const renderer = new PdfRenderer(true);
+    renderer.setSize(renderOptions.imageWidth, renderOptions.imageHeight, toPaperSize(printOptions.paperSizeName));
+
+    self.postMessage(new Message(MessageType.PRINT_RESPONSE, new PrintResponse(URL.createObjectURL(await renderMaze(
+            renderer, renderOptions, wallPaths, renderOptions.solution ? solutionPaths : undefined)))));
+}
 
 async function onSaveRequest(request: SaveRequest) {
     if (maze) {
@@ -137,6 +161,9 @@ async function generateAndRenderMaze(cancelState: CancelState, request: MazeRequ
 
     if (saveRequest) {
         await onSaveRequest(saveRequest);
+    }
+    if (printRequest) {
+        await onPrintRequest(printRequest);
     }
 
     const renderingOptions = currentRenderOptions || request.renderOptions;

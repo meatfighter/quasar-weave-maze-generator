@@ -44,7 +44,7 @@ const resettable = computed(() =>
         || filenameTimestamp.value !== DEFAULT_FILENAME_TIMESTAMP
         || filenamePrefix.value !== DEFAULT_PREFIX
         || filenameSolutionSuffix.value !== DEFAULT_SOLUTION_SUFFIX
-        || selectedPaperSize.value !== DEFAULT_PAPER_SIZE
+        || !selectedPaperSize.value.equals(DEFAULT_PAPER_SIZE)
         || !compareArrays(selectedFormats.value, DEFAULT_FORMATS)
 );
 

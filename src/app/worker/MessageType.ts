@@ -4,4 +4,6 @@ export enum MessageType {
     MAZE_RESPONSE,
     SAVE_REQUEST,
     SAVE_RESPONSE,
+    PRINT_REQUEST,
+    PRINT_RESPONSE,
 }

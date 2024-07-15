@@ -31,6 +31,11 @@ import { toBlob } from 'src/utils/blob';
 import { SaveOptions } from 'src/app/file/SaveOptions';
 import { SaveRequest } from 'src/app/worker/SaveRequest';
 import { useSaveStore } from 'stores/saveStore';
+import { PrintResponse } from 'src/app/worker/PrintResponse';
+import { usePrintStore } from 'stores/printStore';
+import printJS from 'print-js';
+import { PrintOptions } from 'src/app/file/PrintOptions';
+import { PrintRequest } from 'src/app/worker/PrintRequest';
 
 const UPDATE_PROCESSING_DELAY_MILLIS = 400; // Doherty Threshold
 let updateProcessingTimeoutId: number | undefined;
@@ -40,6 +45,9 @@ const { url, processing } = storeToRefs(renderStore);
 
 const saveStore = useSaveStore();
 const { saving } = storeToRefs(saveStore);
+
+const printStore = usePrintStore();
+const { printing } = storeToRefs(printStore);
 
 let mazeWidth = DEFAULT_MAZE_SIZE;
 let mazeHeight = DEFAULT_MAZE_SIZE;
@@ -73,6 +81,9 @@ worker.onmessage = <T>(event: MessageEvent<Message<T>>) => {
         case MessageType.SAVE_RESPONSE:
             void onSaveResponse(message.data as SaveResponse);
             break;
+        case MessageType.PRINT_RESPONSE:
+            void onPrintResponse(message.data as PrintResponse);
+            break;
         case MessageType.ACK_RESPONSE:
             onAckResponse((message.data as AckResponse).id);
             break;
@@ -101,6 +112,15 @@ function onAckResponse(id: number) {
     updateProcessing();
 }
 
+async function onPrintResponse(response: PrintResponse) {
+    try {
+        printJS(response.url);
+    } finally {
+        printing.value = false;
+        URL.revokeObjectURL(response.url);
+    }
+}
+
 async function onSaveResponse(response: SaveResponse) {
     try {
         saveAs(await toBlob(response.url), response.filename);
@@ -118,6 +138,14 @@ function onMazeResponse(response: MazeResponse) {
         }
         url.value = response.url;
     });
+}
+
+export function onPrint(printOptions: PrintOptions) {
+    printing.value = true;
+    worker.postMessage(new Message(MessageType.PRINT_REQUEST, new PrintRequest(
+            new RenderOptions(solution, roundedCorners, cellSize, imageWidth, imageHeight, lineWidthFrac,
+                    passageWidthFrac, wallColor, solutionColor, backgroundColor),
+            printOptions)));
 }
 
 export function onSave(saveOptions: SaveOptions) {
