@@ -33,7 +33,7 @@ import { SaveRequest } from 'src/app/worker/SaveRequest';
 import { useSaveStore } from 'stores/saveStore';
 import { PrintResponse } from 'src/app/worker/PrintResponse';
 import { usePrintStore } from 'stores/printStore';
-import printJS from 'print-js';
+import printJS from 'print-js-updated';
 import { PrintOptions } from 'src/app/file/PrintOptions';
 import { PrintRequest } from 'src/app/worker/PrintRequest';
 
@@ -70,6 +70,8 @@ let maskBlobUrl: string | undefined = undefined;
 
 let idSequence = 0;
 const activeIds = new Set<number>();
+
+let lastPrintUrl: string | null = null;
 
 const worker = new MazeWorker();
 worker.onmessage = <T>(event: MessageEvent<Message<T>>) => {
@@ -114,10 +116,17 @@ function onAckResponse(id: number) {
 
 async function onPrintResponse(response: PrintResponse) {
     try {
-        printJS(response.url);
+        printJS({
+            printable: response.url,
+            type: 'pdf',
+            showModal: true,
+        });
     } finally {
         printing.value = false;
-        URL.revokeObjectURL(response.url);
+        if (lastPrintUrl) {
+            URL.revokeObjectURL(lastPrintUrl);
+        }
+        lastPrintUrl = response.url;
     }
 }
 

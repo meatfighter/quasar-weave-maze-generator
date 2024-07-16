@@ -19,7 +19,7 @@
     "jszip": "^3.10.1",
     "panzoom": "^9.4.3",
     "pinia": "^2.1.7",
-    "print-js": "^1.6.0",
+    "print-js-updated": "^1.6.1",
     "quasar": "^2.16.5",
     "vue": "^3.4.18",
     "vue-router": "^4.0.12"
