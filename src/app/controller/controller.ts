@@ -27,7 +27,6 @@ import { MazeRequest } from 'src/app/worker/MazeRequest';
 import { AckResponse } from 'src/app/worker/AckResponse';
 import { nextTick } from 'vue';
 import { SaveResponse } from 'src/app/worker/SaveResponse';
-import { toBlob } from 'src/utils/blob';
 import { SaveOptions } from 'src/app/file/SaveOptions';
 import { SaveRequest } from 'src/app/worker/SaveRequest';
 import { useSaveStore } from 'stores/saveStore';
@@ -70,8 +69,6 @@ let maskBlobUrl: string | undefined = undefined;
 
 let idSequence = 0;
 const activeIds = new Set<number>();
-
-let lastPrintUrl: string | null = null;
 
 const worker = new MazeWorker();
 worker.onmessage = <T>(event: MessageEvent<Message<T>>) => {
@@ -123,16 +120,13 @@ async function onPrintResponse(response: PrintResponse) {
         });
     } finally {
         printing.value = false;
-        if (lastPrintUrl) {
-            URL.revokeObjectURL(lastPrintUrl);
-        }
-        lastPrintUrl = response.url;
+        URL.revokeObjectURL(response.url);
     }
 }
 
 async function onSaveResponse(response: SaveResponse) {
     try {
-        saveAs(await toBlob(response.url), response.filename);
+        saveAs(response.url, response.filename);
     } finally {
         saving.value = false;
         URL.revokeObjectURL(response.url);
