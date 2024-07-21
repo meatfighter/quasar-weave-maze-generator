@@ -67,7 +67,22 @@ module.exports = configure(function (/* ctx */) {
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      extendViteConf(viteConf) {
+        // Ensure build configuration exists
+        viteConf.build = viteConf.build || {};
+        viteConf.build.rollupOptions = viteConf.build.rollupOptions || {};
+
+        // Set the output format to 'es'
+        viteConf.build.rollupOptions.output = {
+          ...viteConf.build.rollupOptions.output,
+          format: 'es' // Ensure we do not use iife or umd for code-splitting builds
+        };
+
+        // Specify worker format explicitly
+        viteConf.worker = {
+          format: 'es'
+        };
+      },
       // viteVuePluginOptions: {},
 
       vitePlugins: [
@@ -79,7 +94,7 @@ module.exports = configure(function (/* ctx */) {
             lintCommand: 'eslint "./**/*.{js,ts,mjs,cjs,vue}"'
           }
         }, { server: false }]
-      ]
+      ],
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
