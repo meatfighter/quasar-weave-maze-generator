@@ -1,6 +1,6 @@
 {
   "name": "quasar-weave-maze-generator",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A generator of weave mazes.",
   "productName": "Weave Maze Generator",
   "author": "meatfighter.com",
@@ -44,5 +44,12 @@
     "node": "^20 || ^18 || ^16",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
-  }
+  },
+  "keywords": [
+    "maze",
+    "labyrinth",
+    "weave",
+    "braid",
+    "3d"
+  ]
 }
