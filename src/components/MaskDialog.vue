@@ -103,7 +103,7 @@ function closeDialog() {
 <template>
   <q-dialog :model-value="dialogVisible" @before-hide="closeDialog" @drop.prevent="onDrop" @dragover.prevent
             @dragenter.prevent>
-    <q-card style="min-width: 50em;">
+    <q-card style="width: 100%; max-width: 50em;">
       <q-card-section class="q-pa-none" style="background: #2D2D2D;">
         <div class="row items-center justify-between q-pa-sm">
           <div class="col-2"></div>
