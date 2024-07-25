@@ -550,9 +550,9 @@ function mergeRegions(region1: number, region2: number, regions: Node[][]) {
     const region2Nodes = regions[region2];
     for (let i = region1Nodes.length - 1; i >= 0; --i) {
         region1Nodes[i].region = region2;
+        region2Nodes.push(region1Nodes[i]);
     }
-    region2Nodes.push(...region1Nodes);
-    regions[region1].length = 0;
+    regions[region1] = [];
 }
 
 function moveToEnd(nodes: Node[], node: Node) {
